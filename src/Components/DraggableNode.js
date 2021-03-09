@@ -1,6 +1,6 @@
 import React from 'react'
 
-import './DraggableNode.css';
+import '../styles/DraggableNode.css';
 
 
 function DraggableNode(props) {

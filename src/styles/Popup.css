@@ -8,7 +8,7 @@
     bottom: 0;
     margin: auto;
     background-color: rgba(0,0,0, 0.5);
-    z-index: 100;
+    z-index: 999999;
   }
   .popup .popup-inner {
     position: absolute;
@@ -22,7 +22,7 @@
     margin: auto;
     background: white;
     text-align: center;
-    animation: slideDown 2s;
+    animation: slideDown 1s;
   }
 
   @keyframes slideDown {
@@ -49,7 +49,7 @@
   .popup .popup-inner .popup-icon {
     width: 100px;
     height: 100px;
-    background: url('../../images/info-popup.png') center center no-repeat;
+    background: url('../images/info-popup.png') center center no-repeat;
     background-size: cover;
     position: relative;
     margin: 40px auto;

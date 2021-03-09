@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 
-import './Navbar.css';
+import '../styles/Navbar.css';
 
-function Navbar(props) {
-    const [speed, setSpeed] = useState(25);
-    const [algorithm, setAlgorithm] = useState("Dijkstra");
+function Navbar(props) {                
+    const {clearPath, changeSpeed, runAlgorithm, changeAlgorithm, setRandomStart, setRandomFinish } = props
     const algorithmOptions = [
         { value: 'Dijkstra', label: 'Dijkstra' },
         { value: 'A*', label: 'A*' },
@@ -20,23 +19,21 @@ function Navbar(props) {
     ]
 
     const handleAlgoChange = selectedOption => {
-        setAlgorithm(selectedOption.value);
-        props.changeAlgorithm(selectedOption.value);
+        changeAlgorithm(selectedOption.value);
     };
 
     const handleSpeedChange = selectedOption => {
-        setSpeed(selectedOption.value);
-        props.changeSpeed(selectedOption.value);
+        changeSpeed(selectedOption.value);
     };
 
     return (
         <>
             <nav className="Navbar">
-                <div className="flex button-generate-start" onClick={props.setRandomStart}>
+                <div className="flex button-generate-start" onClick={setRandomStart}>
                     <div className="start"></div>
                     <div>Start</div>
                 </div>
-                <div className="flex button-generate-finish" onClick={props.setRandomFinish}>
+                <div className="flex button-generate-finish" onClick={setRandomFinish}>
                     <div className="target"></div>
                     <div>Target</div>
                 </div>
@@ -46,7 +43,6 @@ function Navbar(props) {
                         onChange={handleAlgoChange}
                         options={algorithmOptions}
                         className="selectTag"
-                        value={algorithm}
                         placeholder={algorithmOptions[0].label}
                         defaultValue={algorithmOptions[0].label}
                     />
@@ -57,7 +53,6 @@ function Navbar(props) {
                         onChange={handleSpeedChange}
                         options={speedOptions}
                         className="selectTag"
-                        value={speed}
                         placeholder={speedOptions[2].label}
                         defaultValue={speedOptions[2].label}
                     />
@@ -68,7 +63,7 @@ function Navbar(props) {
                     <div>Unvisited Node</div>
                 </div> */}
 
-                <div className="button rounded" onClick={props.runAlgorithm}>
+                <div className="button rounded" onClick={runAlgorithm}>
                     Visualize
                 </div>
                 <div className="flex">
@@ -83,7 +78,7 @@ function Navbar(props) {
                     <div className="shortest-path"></div>
                     <div>Shortest-Path</div>
                 </div>
-                <div className="flex reset" onClick={props.clearPath}>
+                <div className="flex reset" onClick={clearPath}>
                     <div className="icon"></div>
                     <div className="text">Reset</div>
                 </div>

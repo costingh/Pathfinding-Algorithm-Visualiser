@@ -1,13 +1,16 @@
-import Node from "../Node/Node";
-import { dijkstra, getNodesInShortestPathOrder } from '../../Algorithms/dijkstra';
+import Node from "./Node";
+import { dijkstra, getNodesInShortestPathOrder } from '../Algorithms/dijkstra';
 import React, { Component } from 'react';
-import Popup from '../Popup/Popup';
-import { InfoTab } from '../InfoTab/InfoTab';
-import Navbar from '../Navbar/Navbar';
+import Popup from './Popup';
+import { InfoTab } from './InfoTab';
+import Navbar from './Navbar';
 
-import './DijkstraPath.css';
+import '../styles/Grid.css';
 
-export default class DijkstraPath extends Component {
+/* de verificat drag and drop : cand incerci sa muti un nod, dar il pui in locul de unde il iei, eroare... */
+
+
+export default class Grid extends Component {
 	constructor() {
 		super();
 		this.state = {
@@ -15,6 +18,7 @@ export default class DijkstraPath extends Component {
 			mouseIsPressed: false,
 			running: false,
 			animationSpeed: 25,
+			algorithm: 'Dijkstra',
 			finished: false,
 			startRow: -1,
 			startColumn: -1,
@@ -60,16 +64,12 @@ export default class DijkstraPath extends Component {
 	};
 
 	getInitialGrid() {
-		const heightApp = document.querySelector('.App').clientHeight;
-		const heightNavbar = document.querySelector('.Navbar').clientHeight;
-		const height = heightApp - heightNavbar;
-		const width = document.querySelector('.App').clientWidth;
-		/* const height = document.querySelector('.Wrapper').clientHeight; 
-		const width = document.querySelector('.Wrapper').clientWidth; */
-
+		const height = document.querySelector('.Grid').clientHeight;
+		const width = document.querySelector('.Grid').clientWidth;
 		const numberOfRows = Math.floor(height / 40);
 		const numberOfColumns = Math.floor(width / 40);
 		const grid = [];
+
 		for (let row = 0; row < numberOfRows; row++) {
 			const currentRow = [];
 			for (let col = 0; col < numberOfColumns; col++) {
@@ -126,17 +126,14 @@ export default class DijkstraPath extends Component {
 	}
 
 	setRandomStart() {
-		/* if you clicked the "Generate now!" button from popup, the popup will be closed, and there will be generated a random node*/
-		if (this.state.showPopup)
-			this.setState({ showPopup: false });
-		/* If you want to generate a random startNode, but after the visualisation has ended */
+		if (this.state.showPopup) this.setState({ showPopup: false });
 		if (this.state.finished && !this.state.running) {
 			this.resetAll(() => {
 				this.generateRandomStart();
 			});
 			return;
 		}
-		/* If visualisation is still executing, show a popup */
+
 		if (this.state.running) {
 			alert('The program is already running. You cannot generate a random start node until execution finishes!');
 			return;
@@ -144,7 +141,6 @@ export default class DijkstraPath extends Component {
 		this.generateRandomStart();
 	}
 
-	/* Drag and drop handlers for start node */
 	dragHandler(event, row, col) {
 		const { grid } = this.state;
 		if (grid[row][col].isWall) return;
@@ -166,70 +162,33 @@ export default class DijkstraPath extends Component {
 
 	DropHandler(event, row, col) {
 		event.preventDefault();
-		/* const {grid} = this.state; */
-
 		if (this.state.startNodeIsBeingDragged) {
 			let data = event.dataTransfer.getData("Start");
 			event.target.appendChild(document.getElementById(data));
 			this.setState({ mouseIsPressed: false, startRow: row, startColumn: col, startNodeIsBeingDragged: false });
 			return;
 		}
-		if (this.state.finishNodeIsBeingDragged && !this.state.finished) {
+		if (this.state.finishNodeIsBeingDragged) {
 			let data = event.dataTransfer.getData("Finish");
 			event.target.appendChild(document.getElementById(data));
 			this.setState({ mouseIsPressed: false, finishRow: row, finishColumn: col, finishtNodeIsBeingDragged: false });
 			return;
 		}
-
-
-		/* if (this.state.finished && this.state.finishNodeIsBeingDragged) {
-			if (grid[row][col].isWall) return;
-			const startNode = grid[this.state.startRow][this.state.startColumn];
-			const finishNode = grid[row][col];
-			const newGrid = this.drawTargetNode(grid, row, col);
-			this.setState({ grid: newGrid }, () => {
-				const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-				const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-				this.realTimeComputingDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-			});
-		} */
-
-		/* if (this.state.finished && this.state.finishNodeIsBeingDragged) {
-			const {grid} = this.state.grid;
-			if (grid[row][col].isWall) return;
-			const startNode = grid[row][col];
-			const finishNode = grid[row][col];
-			const newGrid = this.drawTargetNode(grid, row, col);
-			this.setState({ grid: newGrid }, () => {
-				const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-				const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-				this.realTimeComputingDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-			});
-		} */
 	}
 
 	DropOverHandler(event, row, col) {
 		event.preventDefault();
 	}
-	/* End Drag and drop handlers for start node */
 
 	handleMouseDown(row, col) {
 		if (this.state.running || this.state.grid[row][col].isStart) return;
 
-		const node = this.state.grid[row][col];
-		let { isFinish } = node;
-
-		/* if (isFinish && this.state.finished) {
-			const newGrid = this.state.grid.slice();
-			newGrid[row][col].isFinish = false;	
-			this.setState({ mouseIsPressed: true, grid: newGrid });
-		} */
-
-		if (!isFinish && !this.state.finished) {
+		if (!this.state.grid[row][col].isFinish && !this.state.finished) {
 			const newGrid = this.drawWall(this.state.grid, row, col);
 			this.setState({ grid: newGrid, mouseIsPressed: true });
 		}
 	}
+
 
 	handleMouseEnter(row, col) {
 		if (!this.state.mouseIsPressed || this.state.running) return;
@@ -237,30 +196,17 @@ export default class DijkstraPath extends Component {
 		const { grid } = this.state;
 		let { isFinish, isStart, isWall } = grid[row][col];
 
-		/* If the mouse enters an ordinary node and start node isn't moving, then we want to draw a wall */
 		if (!isFinish && !this.state.finished && !this.state.startNodeIsMoving && !isStart) {
 			const newGrid = this.drawWall(this.state.grid, row, col);
 			this.setState({ grid: newGrid });
 		}
-
-		/* if (this.state.finished) {
-			if (isWall) return;
-			const startNode = grid[this.state.startRow][this.state.startColumn];
-			const finishNode = grid[row][col];
-			const newGrid = this.drawTargetNode(grid, row, col);
-			this.setState({ grid: newGrid }, () => {
-				const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-				const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-				this.realTimeComputingDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-			});
-		} */
 	}
 
 	handleMouseUp() {
 		this.setState({ mouseIsPressed: false });/* , startNodeIsMoving: false */
 	}
 
-	realTimeComputingDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {		/* Compute the shorthest-path in real time when dragging the target node */
+	realTimeComputingDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {		/* Compute the shorthest-path in when dragging the target node */
 		for (let node of document.getElementsByClassName(`Node Node-visited`))		/* Remove the class of visited nodes, and add it correctly */
 			node.classList.remove('Node-visited');
 		for (let node of visitedNodesInOrder)
@@ -313,7 +259,6 @@ export default class DijkstraPath extends Component {
 			alert('Already running!');
 			return;
 		}
-		/* If you click twice in a row on the "Visualize" button */
 		if (this.state.finished || this.state.running) {
 			this.setState({
 				popupHeader: "Clear all?",
@@ -345,6 +290,19 @@ export default class DijkstraPath extends Component {
 				this.togglePopup();
 			});
 		}
+
+		/* If you click the "Visualize" button, but there is no finishNode */
+		if (this.state.finishRow === -1 && this.state.finishColumn === -1) {
+			this.setState({
+				popupHeader: "Not found",
+				popupDescription: "The starting node and the finish one were not generated. In order to vizualize the path found by the algorithm, please generate them.",
+				popupButton: "Generate now!"
+			}, () => {
+				this.togglePopup();
+			});
+		}
+
+
 	}
 
 	togglePopup() {
@@ -354,12 +312,14 @@ export default class DijkstraPath extends Component {
 	}
 
 	runAgain() {
-		const { startRow, startColumn } = this.state;
-
+		const { startRow, startColumn, finishRow, finishColumn } = this.state;
 		this.resetAll();
+		
 		this.setState({
 			startRow: startRow,
 			startColumn: startColumn,
+			finishRow: finishRow,
+			finishColumn: finishColumn,
 			runAgain: !this.state.runAgain,
 			showPopup: !this.state.showPopup
 		});
@@ -389,12 +349,12 @@ export default class DijkstraPath extends Component {
 		});
 	}
 
-	async handleChangeSpeed(speed) {
-		await this.setState({ animationSpeed: speed });
+	handleChangeSpeed(speed) {
+		this.setState({ animationSpeed: speed });
 	}
 
-	async handleChangeAlgorithm(name) {
-		await console.log('Algorithm changed: ' + name);
+	handleChangeAlgorithm(name) {
+		console.log('Algorithm changed: ' + name);
 	}
 
 	render() {

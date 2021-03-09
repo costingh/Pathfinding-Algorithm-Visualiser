@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-/* import DraggableNode from '../Node/DraggableNode'; */
 
-import './Node.css';
+import '../styles/Node.css';
 
 export default class Node extends Component {
   render() {
@@ -17,13 +16,12 @@ export default class Node extends Component {
       onDragOver,
       onDragStart,
       row,
-    } = this.props;
-    const NodeType = isWall && 'Node-wall';
+    } = this.props;   
 
     return (
       <div
         id={`Node-${row}-${col}`}
-        className={`Node ${NodeType}`}
+        className={`Node ${isWall && 'Node-wall'}`}
         onMouseDown={() => onMouseDown(row, col)}
         onMouseEnter={() => onMouseEnter(row, col)}
         onMouseUp={() => onMouseUp()}
@@ -31,22 +29,17 @@ export default class Node extends Component {
         onDragOver={(event) => onDragOver(event, row, col)}
         onDragStart={(event) => onDragStart(event, row, col)}
       >
-        {isStart
-          &&
-          <div draggable="true"
-            id="dragstart"
-            onDragStart={this.onDragStart}></div>
+        {isStart && <div draggable="true"
+            id={'dragstart'}
+            onDragStart={this.onDragStart}>
+        </div>
         }
 
-
-        {isFinish
-          &&
-          <div draggable="true"
-            id="dragtarget"
-            onDragStart={this.onDragStart}></div>
+        {isFinish && <div draggable="true"
+            id={'dragtarget'}
+            onDragStart={this.onDragStart}>
+        </div>
         }
-
-
       </div>
     );
   }

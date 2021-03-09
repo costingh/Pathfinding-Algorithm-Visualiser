@@ -33,12 +33,12 @@
   }
   
   .Navbar .flex .start {
-    background: url('../../images/start-flag.png') center no-repeat;
+    background: url('../images/start-flag.png') center no-repeat;
       background-size: cover;
   }
   
   .Navbar .flex .target {
-    background: url('../../images/finish-flag.png') center no-repeat;
+    background: url('../images/finish-flag.png') center no-repeat;
       background-size: cover;
   }
   
@@ -59,7 +59,7 @@
   }
   
   .Navbar .flex .speed {
-    background: url('../../images/speed.png') center no-repeat;
+    background: url('../images/speed.png') center no-repeat;
     background-size: cover;
     width: 25px;
     height: 25px;
@@ -80,7 +80,7 @@
   .reset .icon {
     height: 30px;
     width: 30px;
-    background: url('../../images/reset.png') center center no-repeat;
+    background: url('../images/reset.png') center center no-repeat;
     background-size: cover;
     margin-right: 10px;
   }
