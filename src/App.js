@@ -1,25 +1,24 @@
-import logo from './logo.svg';
+import DijkstraPath from "./Components/FindPath/DijkstraPath";
+/* import Navbar from './Components/Navbar/Navbar'; */
+
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* <Navbar
+            clearPath={this.resetAll.bind(this)}
+            changeSpeed={this.handleChangeSpeed.bind(this)}
+            runAlgorithm={this.visualizeDijkstra.bind(this)}
+            changeAlgorithm={this.handleChangeAlgorithm.bind(this)}
+            setRandomStart={this.setRandomStart.bind(this)}
+            setRandomFinish={this.generateRandomFinish.bind(this)}
+          /> */}
+      <DijkstraPath></DijkstraPath>
     </div>
   );
 }
 
 export default App;
+
+
