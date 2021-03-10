@@ -3,6 +3,19 @@ import React, { Component } from 'react';
 import '../styles/Node.css';
 
 export default class Node extends Component {
+/*   constructor(props) {
+    super(props);
+    this.state={
+      x: props.row,
+      y: props.col,
+      f: 0,
+      g: 0,
+      h: 0,
+      neighbors: [],
+      previous: undefined
+    }
+  }   */
+  
   render() {
     const {
       col,
@@ -44,6 +57,3 @@ export default class Node extends Component {
     );
   }
 }
-
-/* onDrop={(event) => this.handleDrop(event)}
-          onDragOver={(event) => this.handleDropOver(event)} */

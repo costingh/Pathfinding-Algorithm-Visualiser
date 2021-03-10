@@ -1,5 +1,6 @@
 import Node from "./Node";
-import { dijkstra, getNodesInShortestPathOrder } from '../Algorithms/dijkstra';
+import { dijkstra, backtrackDijkstra } from '../Algorithms/dijkstra';
+import {aStar, backtrackAStar} from '../Algorithms/a_star';
 import React, { Component } from 'react';
 import Popup from './Popup';
 import { InfoTab } from './InfoTab';
@@ -33,7 +34,7 @@ export default class Grid extends Component {
 			finishNodeIsBeingDragged: false
 		  };
 	}
-
+	
 	componentDidMount() {
 		this.setState({ grid: this.getInitialGrid() });
 	}
@@ -48,6 +49,10 @@ export default class Grid extends Component {
 			isVisited: false,
 			isWall: false,
 			previousNode: null,
+			f: 0,
+			g: 0,
+			h: 0,
+			parent: null
 		};
 	};
 
@@ -222,7 +227,68 @@ export default class Grid extends Component {
 			document.getElementById(`Node-${node.row}-${node.col}`).className = 'Node Node-shortest-path';
 	}
 
-	animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
+	visualizeCurrentAlgorithm() {
+		if (this.state.running) {
+			alert('Already running!');
+			return;
+		}
+		if (this.state.finished || this.state.running) {
+			this.setState({
+				popupHeader: "Clear all?",
+				popupDescription: "The previous path is still drawn. Do you want to clear it and see the new one?",
+				popupButton: "Clear it!",
+				runAgain: true
+			}, () => {
+				this.togglePopup();
+			});
+			return;
+		}
+
+		/* If you click the "Visualize" button, but there is no startNode */
+		if (this.state.startRow !== -1 && this.state.startColumn !== -1) {
+			this.setState({ running: true }, () => {
+				const { grid } = this.state;
+				const startNode = grid[this.state.startRow][this.state.startColumn];
+				const finishNode = grid[this.state.finishRow][this.state.finishColumn];
+
+				if(this.state.algorithm === 'Dijkstra') {
+					const visitedNodesInOrder = dijkstra(grid, startNode, finishNode)
+					const nodesInShortestPathOrder = backtrackDijkstra(finishNode);
+					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
+				}
+
+				if(this.state.algorithm === 'A*') {
+					const visitedNodesInOrder = aStar(grid, startNode, finishNode)
+					const nodesInShortestPathOrder = backtrackAStar(finishNode);
+					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
+				}
+
+				/* Add More */
+				
+			});
+		} else {
+			this.setState({
+				popupHeader: "Not found",
+				popupDescription: "The starting node and the finish one were not generated. In order to vizualize the path found by the algorithm, please generate them.",
+				popupButton: "Generate now!"
+			}, () => {
+				this.togglePopup();
+			});
+		}
+
+		/* If you click the "Visualize" button, but there is no finishNode */
+		if (this.state.finishRow === -1 && this.state.finishColumn === -1) {
+			this.setState({
+				popupHeader: "Not found",
+				popupDescription: "The starting node and the finish one were not generated. In order to vizualize the path found by the algorithm, please generate them.",
+				popupButton: "Generate now!"
+			}, () => {
+				this.togglePopup();
+			});
+		}
+	}
+
+	animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder) {
 		for (let i = 0; i <= visitedNodesInOrder.length; i++) {
 			if (i === visitedNodesInOrder.length) {
 				setTimeout(() => {
@@ -252,57 +318,6 @@ export default class Grid extends Component {
 			running: false,
 			finished: true
 		});
-	}
-
-	visualizeDijkstra() {
-		if (this.state.running) {
-			alert('Already running!');
-			return;
-		}
-		if (this.state.finished || this.state.running) {
-			this.setState({
-				popupHeader: "Clear all?",
-				popupDescription: "The previous path is still drawn. Do you want to clear it and see the new one?",
-				popupButton: "Clear it!",
-				runAgain: true
-			}, () => {
-				this.togglePopup();
-			});
-			return;
-		}
-
-		/* If you click the "Visualize" button, but there is no startNode */
-		if (this.state.startRow !== -1 && this.state.startColumn !== -1) {
-			this.setState({ running: true }, () => {
-				const { grid } = this.state;
-				const startNode = grid[this.state.startRow][this.state.startColumn];
-				const finishNode = grid[this.state.finishRow][this.state.finishColumn];
-				const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-				const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-				this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-			});
-		} else {
-			this.setState({
-				popupHeader: "Not found",
-				popupDescription: "The starting node and the finish one were not generated. In order to vizualize the path found by the algorithm, please generate them.",
-				popupButton: "Generate now!"
-			}, () => {
-				this.togglePopup();
-			});
-		}
-
-		/* If you click the "Visualize" button, but there is no finishNode */
-		if (this.state.finishRow === -1 && this.state.finishColumn === -1) {
-			this.setState({
-				popupHeader: "Not found",
-				popupDescription: "The starting node and the finish one were not generated. In order to vizualize the path found by the algorithm, please generate them.",
-				popupButton: "Generate now!"
-			}, () => {
-				this.togglePopup();
-			});
-		}
-
-
 	}
 
 	togglePopup() {
@@ -354,7 +369,7 @@ export default class Grid extends Component {
 	}
 
 	handleChangeAlgorithm(name) {
-		console.log('Algorithm changed: ' + name);
+		this.setState({ algorithm: name });
 	}
 
 	render() {
@@ -377,7 +392,7 @@ export default class Grid extends Component {
 				<Navbar
 					clearPath={this.resetAll.bind(this)}
 					changeSpeed={this.handleChangeSpeed.bind(this)}
-					runAlgorithm={this.visualizeDijkstra.bind(this)}
+					runAlgorithm={this.visualizeCurrentAlgorithm.bind(this)}
 					changeAlgorithm={this.handleChangeAlgorithm.bind(this)}
 					setRandomStart={this.setRandomStart.bind(this)}
 					setRandomFinish={this.generateRandomFinish.bind(this)}
