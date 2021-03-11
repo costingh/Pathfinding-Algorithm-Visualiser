@@ -7,6 +7,7 @@ import { InfoTab } from './InfoTab';
 import Navbar from './Navbar';
 
 import '../styles/Grid.css';
+import SecondNavbar from "./SecondNavbar";
 
 /* de verificat drag and drop : cand incerci sa muti un nod, dar il pui in locul de unde il iei, eroare... */
 
@@ -31,7 +32,9 @@ export default class Grid extends Component {
 			popupButton: '',
 			runAgain: false,
 			startNodeIsBeingDragged: false,
-			finishNodeIsBeingDragged: false
+			finishNodeIsBeingDragged: false,
+			heuristicType: 'euclidean',
+			timeTaken: 0
 		  };
 	}
 	
@@ -228,6 +231,7 @@ export default class Grid extends Component {
 	}
 
 	visualizeCurrentAlgorithm() {
+		let start = window.performance.now();
 		if (this.state.running) {
 			alert('Already running!');
 			return;
@@ -258,7 +262,7 @@ export default class Grid extends Component {
 				}
 
 				if(this.state.algorithm === 'A*') {
-					const visitedNodesInOrder = aStar(grid, startNode, finishNode)
+					const visitedNodesInOrder = aStar(grid, startNode, finishNode, this.state.heuristicType)
 					const nodesInShortestPathOrder = backtrackAStar(finishNode);
 					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
 				}
@@ -286,6 +290,10 @@ export default class Grid extends Component {
 				this.togglePopup();
 			});
 		}
+
+		let finish = window.performance.now();
+		let timeTaken = finish-start;
+		this.setState({timeTaken: timeTaken})
 	}
 
 	animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder) {
@@ -372,6 +380,10 @@ export default class Grid extends Component {
 		this.setState({ algorithm: name });
 	}
 
+	handleChangeHeuristic(heuristic) {
+		this.setState({heuristicType : heuristic})
+	}
+
 	render() {
 		const { grid, mouseIsPressed, running } = this.state;
 		return (
@@ -396,6 +408,11 @@ export default class Grid extends Component {
 					changeAlgorithm={this.handleChangeAlgorithm.bind(this)}
 					setRandomStart={this.setRandomStart.bind(this)}
 					setRandomFinish={this.generateRandomFinish.bind(this)}
+				/>
+				<SecondNavbar 
+					handleChangeHeuristic={this.handleChangeHeuristic.bind(this)}
+					timeTaken={this.state.timeTaken}
+					algorithm={this.state.algorithm}
 				/>
 				<div className="Grid">
 					{grid.map((row, rowIndex) => {
