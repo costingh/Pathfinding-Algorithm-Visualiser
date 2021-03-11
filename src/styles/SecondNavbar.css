@@ -1,0 +1,31 @@
+.SecondNavbar {
+    background: #f2eff0;
+    height: auto;
+    padding: 0px 0px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; 
+    align-items: center;
+    text-transform: capitalize;
+    letter-spacing: .5px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+  }
+  
+  .SecondNavbar .flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 0px;
+    margin: 0px 20px;
+  }
+
+  .SecondNavbar .selectTag {
+    width: 150px;
+    margin-left: 10px;
+  }
+
+  .SecondNavbar .time {
+      margin-left: 10px;
+  }

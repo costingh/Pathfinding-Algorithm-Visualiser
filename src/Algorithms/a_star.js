@@ -1,11 +1,28 @@
-function heuristic(nodeA, nodeB) {
+function heuristic(nodeA, nodeB, heuristicType) {
+
     // Manhattan distance
-    let d1 = Math.abs(nodeB.row - nodeA.row);
-    let d2 = Math.abs(nodeB.col - nodeA.col);
-    return d1+d2;
+    if(heuristicType === 'manhattan') {
+        let d1 = Math.abs(nodeB.row - nodeA.row);
+        let d2 = Math.abs(nodeB.col - nodeA.col);
+        return d1+d2;
+    }
+
+    /* Euclidean distance */
+    if(heuristicType === 'euclidean') {
+        let d1 = Math.pow(nodeB.row - nodeA.row,2);
+        let d2 = Math.pow(nodeB.col - nodeA.col,2);
+        return d1+d2;
+    }
+    
+    /* Diagonal distance */
+    if(heuristicType === 'diagonal') {
+        let d1 = Math.abs(nodeB.row - nodeA.row);
+        let d2 = Math.abs(nodeB.col - nodeA.col);
+        return Math.max(d1,d2) + (Math.sqrt(2)-1) * Math.min(d1,d2);
+    }
 }
 
-export function aStar(grid, startNode, finishNode) {
+export function aStar(grid, startNode, finishNode, heuristicType) {
     let openList = [];
     const closedList = []
     let visitedNodes  = []
@@ -50,7 +67,7 @@ export function aStar(grid, startNode, finishNode) {
                 // the first time we visit this node, that means that it is the best
                 // Moreover, we need to get the heuristic score (h)
                 gScoreIsBest = true;
-                neighbor.h = heuristic(neighbor, finishNode);
+                neighbor.h = heuristic(neighbor, finishNode, heuristicType);
                 openList.push(neighbor);
             } else if(gScore < neighbor.g) {
                 gScoreIsBest = true;
@@ -76,19 +93,49 @@ function getNeighbors(node, grid) {
     let x = node.row;
     let y = node.col;
 
+    // West
     if(grid[x-1] && grid[x-1][y]) {
         neighbors.push(grid[x-1][y]);
-      }
-      if(grid[x+1] && grid[x+1][y]) {
+    }
+
+    // East
+    if(grid[x+1] && grid[x+1][y]) {
         neighbors.push(grid[x+1][y]);
-      }
-      if(grid[x][y-1] && grid[x][y-1]) {
+    }
+
+    // South
+    if(grid[x][y-1] && grid[x][y-1]) {
         neighbors.push(grid[x][y-1]);
-      }
-      if(grid[x][y+1] && grid[x][y+1]) {
+    }
+
+    // North
+    if(grid[x][y+1] && grid[x][y+1]) {
         neighbors.push(grid[x][y+1]);
-      }
-      return neighbors;
+    }
+
+    /* Diagonal */
+        /* // Southwest
+        if(grid[x-1] && grid[x-1][y-1]) {
+            neighbors.push(grid[x-1][y-1]);
+        }
+
+        // Southeast
+        if(grid[x+1] && grid[x+1][y-1]) {
+            neighbors.push(grid[x+1][y-1]);
+        }
+
+        // Northwest
+        if(grid[x-1] && grid[x-1][y+1]) {
+            neighbors.push(grid[x-1][y+1]);
+        }
+
+        // Northeast
+        if(grid[x+1] && grid[x+1][y+1]) {
+            neighbors.push(grid[x+1][y+1]);
+        } */
+
+
+    return neighbors;
 }
 
 // Backtracks from the finishNode to find the shortest path.
