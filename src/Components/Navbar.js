@@ -8,7 +8,7 @@ function Navbar(props) {
     const algorithmOptions = [
         { value: 'Dijkstra', label: 'Dijkstra' },
         { value: 'A*', label: 'A*' },
-        { value: 'Breadth-First', label: 'Breadth-First' }
+        { value: 'BFS', label: 'BFS' }
     ]
     const speedOptions = [
         { value: '100', label: 'Very Slow' },

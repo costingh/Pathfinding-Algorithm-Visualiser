@@ -22,7 +22,7 @@ function heuristic(nodeA, nodeB, heuristicType) {
     }
 }
 
-export function aStar(grid, startNode, finishNode, heuristicType) {
+export function aStar(grid, startNode, finishNode, heuristicType, allowDiagonal) {
     let openList = [];
     const closedList = []
     let visitedNodes  = []
@@ -49,7 +49,7 @@ export function aStar(grid, startNode, finishNode, heuristicType) {
         openList = openList.filter((node) => { return node !== currentNode})
 
         closedList.push(currentNode);
-        let neighbors = getNeighbors(currentNode, grid);
+        let neighbors = getNeighbors(currentNode, grid, allowDiagonal);
 
         for(let i=0; i<neighbors.length; i++) {
             let neighbor = neighbors[i];
@@ -88,7 +88,7 @@ export function aStar(grid, startNode, finishNode, heuristicType) {
 }
 
 
-function getNeighbors(node, grid) {
+function getNeighbors(node, grid, allowDiagonal) {
     let neighbors = [];
     let x = node.row;
     let y = node.col;
@@ -113,8 +113,8 @@ function getNeighbors(node, grid) {
         neighbors.push(grid[x][y+1]);
     }
 
-    /* Diagonal */
-        /* // Southwest
+    if(allowDiagonal) {
+        // Southwest
         if(grid[x-1] && grid[x-1][y-1]) {
             neighbors.push(grid[x-1][y-1]);
         }
@@ -132,8 +132,8 @@ function getNeighbors(node, grid) {
         // Northeast
         if(grid[x+1] && grid[x+1][y+1]) {
             neighbors.push(grid[x+1][y+1]);
-        } */
-
+        }
+    }
 
     return neighbors;
 }

@@ -1,6 +1,7 @@
 import Node from "./Node";
 import { dijkstra, backtrackDijkstra } from '../Algorithms/dijkstra';
 import {aStar, backtrackAStar} from '../Algorithms/a_star';
+import { BFS, backtrackBFS } from "../Algorithms/breadthFirstSearch";
 import React, { Component } from 'react';
 import Popup from './Popup';
 import { InfoTab } from './InfoTab';
@@ -34,6 +35,7 @@ export default class Grid extends Component {
 			startNodeIsBeingDragged: false,
 			finishNodeIsBeingDragged: false,
 			heuristicType: 'euclidean',
+			allowDiagonal: true,
 			timeTaken: 0
 		  };
 	}
@@ -74,8 +76,8 @@ export default class Grid extends Component {
 	getInitialGrid() {
 		const height = document.querySelector('.Grid').clientHeight;
 		const width = document.querySelector('.Grid').clientWidth;
-		const numberOfRows = Math.floor(height / 40);
-		const numberOfColumns = Math.floor(width / 40);
+		const numberOfRows = Math.floor(height / 30);
+		const numberOfColumns = Math.floor(width / 30);
 		const grid = [];
 
 		for (let row = 0; row < numberOfRows; row++) {
@@ -262,11 +264,16 @@ export default class Grid extends Component {
 				}
 
 				if(this.state.algorithm === 'A*') {
-					const visitedNodesInOrder = aStar(grid, startNode, finishNode, this.state.heuristicType)
+					const visitedNodesInOrder = aStar(grid, startNode, finishNode, this.state.heuristicType, this.state.allowDiagonal)
 					const nodesInShortestPathOrder = backtrackAStar(finishNode);
 					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
 				}
 
+				if(this.state.algorithm === 'BFS') {
+					const visitedNodesInOrder = BFS(grid, startNode, finishNode, this.state.allowDiagonal)
+					const nodesInShortestPathOrder = backtrackBFS(finishNode);
+					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
+				}
 				/* Add More */
 				
 			});
@@ -384,11 +391,15 @@ export default class Grid extends Component {
 		this.setState({heuristicType : heuristic})
 	}
 
+	handleChangeDiagonal(val) {
+		this.setState({ allowDiagonal: val})
+	}
+
 	render() {
 		const { grid, mouseIsPressed, running } = this.state;
 		return (
 			<div className="Wrapper">
-				<InfoTab></InfoTab>
+				{/* <InfoTab></InfoTab> */}
 				{this.state.showPopup &&
 					<Popup
 						header={this.state.popupHeader}
@@ -411,8 +422,8 @@ export default class Grid extends Component {
 				/>
 				<SecondNavbar 
 					handleChangeHeuristic={this.handleChangeHeuristic.bind(this)}
+					handleChangeDiagonal={this.handleChangeDiagonal.bind(this)}
 					timeTaken={this.state.timeTaken}
-					algorithm={this.state.algorithm}
 				/>
 				<div className="Grid">
 					{grid.map((row, rowIndex) => {
