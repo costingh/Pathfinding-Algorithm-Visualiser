@@ -29,17 +29,17 @@ export default class Node extends Component {
         onDragOver={(event) => onDragOver(event, row, col)}
         onDragStart={(event) => onDragStart(event, row, col)}
       >
-        {isStart && <div draggable="true"
+        {isStart && <div
             id={'dragstart'}
-            onDragStart={this.onDragStart}>
+            >
         </div>
         }
 
-        {isFinish && <div draggable="true"
+        {/* {isFinish && <div draggable="true"
             id={'dragtarget'}
             onDragStart={this.onDragStart}>
         </div>
-        }
+        } */}
       </div>
     );
   }

@@ -62,6 +62,7 @@ export default class Grid extends Component {
 	};
 
 	drawWall(grid, row, col) {
+		if(grid[row][col].isWall) return grid;
 		const newGrid = grid.slice();
 		newGrid[row][col].isWall = !newGrid[row][col].isWall;
 		return newGrid;
@@ -76,8 +77,8 @@ export default class Grid extends Component {
 	getInitialGrid() {
 		const height = document.querySelector('.Grid').clientHeight;
 		const width = document.querySelector('.Grid').clientWidth;
-		const numberOfRows = Math.floor(height / 30);
-		const numberOfColumns = Math.floor(width / 30);
+		const numberOfRows = Math.floor(height / 35);
+		const numberOfColumns = Math.floor(width / 35);
 		const grid = [];
 
 		for (let row = 0; row < numberOfRows; row++) {
@@ -152,7 +153,7 @@ export default class Grid extends Component {
 	}
 
 	dragHandler(event, row, col) {
-		const { grid } = this.state;
+		/* const { grid } = this.state;
 		if (grid[row][col].isWall) return;
 
 		if (grid[row][col].isStart) {
@@ -167,11 +168,11 @@ export default class Grid extends Component {
 			this.setState({
 				finishNodeIsBeingDragged: true
 			});
-		}
+		} */
 	}
 
 	DropHandler(event, row, col) {
-		event.preventDefault();
+		/* event.preventDefault();
 		if (this.state.startNodeIsBeingDragged) {
 			let data = event.dataTransfer.getData("Start");
 			event.target.appendChild(document.getElementById(data));
@@ -183,15 +184,23 @@ export default class Grid extends Component {
 			event.target.appendChild(document.getElementById(data));
 			this.setState({ mouseIsPressed: false, finishRow: row, finishColumn: col, finishtNodeIsBeingDragged: false });
 			return;
-		}
+		} */
 	}
 
 	DropOverHandler(event, row, col) {
-		event.preventDefault();
+		/* event.preventDefault(); */
 	}
 
 	handleMouseDown(row, col) {
-		if (this.state.running || this.state.grid[row][col].isStart) return;
+		/* if (this.state.running || this.state.grid[row][col].isStart) return; */
+
+		if (this.state.running) return;
+
+		if (this.state.grid[row][col].isStart) {
+			this.state.grid[row][col].isStart = false
+			this.setState({mouseIsPressed: true, startNodeIsBeingDragged: true})
+			return;
+		}
 
 		if (!this.state.grid[row][col].isFinish && !this.state.finished) {
 			const newGrid = this.drawWall(this.state.grid, row, col);
@@ -206,14 +215,26 @@ export default class Grid extends Component {
 		const { grid } = this.state;
 		let { isFinish, isStart, isWall } = grid[row][col];
 
-		if (!isFinish && !this.state.finished && !this.state.startNodeIsMoving && !isStart) {
+		if (!isFinish && !this.state.finished && !this.state.startNodeIsMoving && !isStart && !this.state.startNodeIsBeingDragged) {
 			const newGrid = this.drawWall(this.state.grid, row, col);
 			this.setState({ grid: newGrid });
+		}
+
+		if(this.state.startNodeIsBeingDragged) {
+			if(isWall) return;
+			let previousStartNode = document.querySelector('#dragstart');
+			if( previousStartNode ) {
+				console.log(previousStartNode);
+				previousStartNode.remove();
+			}
+				
+		this.state.grid[row][col].isStart = true;
+		this.setState({startColumn: col, startRow: row });
 		}
 	}
 
 	handleMouseUp() {
-		this.setState({ mouseIsPressed: false });/* , startNodeIsMoving: false */
+		this.setState({ mouseIsPressed: false, startNodeIsBeingDragged: false });
 	}
 
 	realTimeComputingDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {		/* Compute the shorthest-path in when dragging the target node */
