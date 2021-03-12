@@ -38,7 +38,7 @@
   }
   
   .Navbar .flex .target {
-    background: url('../images/finish-flag.png') center no-repeat;
+    background: url('../images/circle.png') center no-repeat;
       background-size: cover;
   }
   
@@ -73,7 +73,7 @@
 
   .button-generate-start:hover,
   .button-generate-finish:hover {
-    color: rgb(156, 156, 156);
+    color: #0773e7;
     
   }
 

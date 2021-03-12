@@ -186,21 +186,28 @@ export default class Grid extends Component {
 
 		if(this.state.startNodeIsBeingDragged) {
 			if(isWall) return;
+			// Get the previous node from the grid, that still has isStart=true, and set it to false
 			let previousStartNode = document.querySelector('#dragstart');
-			if( previousStartNode ) {
-				previousStartNode.remove();
-			}
-				
+			if(previousStartNode) {
+				const prevRow = parseInt(previousStartNode.parentNode.id.split('-')[1]);
+				const prevCol = parseInt(previousStartNode.parentNode.id.split('-')[2]);
+				if(grid[prevRow][prevCol].isStart)
+					grid[prevRow][prevCol].isStart = false;
+			}		
 			grid[row][col].isStart = true;
-			this.setState({startColumn: col, startRow: row });
+			this.setState({grid, startColumn: col, startRow: row });
 		}
 
 		if(this.state.finishNodeIsBeingDragged) {
 			if(isWall) return;
 			let previousFinishNode = document.querySelector('#dragtarget');
-			if( previousFinishNode ) {
-				previousFinishNode.remove();
+			if(previousFinishNode) {
+				const prevRow = parseInt(previousFinishNode.parentNode.id.split('-')[1]);
+				const prevCol = parseInt(previousFinishNode.parentNode.id.split('-')[2]);
+				if(grid[prevRow][prevCol].isFinish)
+					grid[prevRow][prevCol].isFinish = false;
 			}
+				
 				
 			grid[row][col].isFinish = true;
 			this.setState({finishColumn: col, finishRow: row });
@@ -228,7 +235,6 @@ export default class Grid extends Component {
 	}
 
 	visualizeCurrentAlgorithm() {
-		let start = window.performance.now();
 		if (this.state.running) {
 			alert('Already running!');
 			return;
@@ -251,25 +257,36 @@ export default class Grid extends Component {
 				const { grid } = this.state;
 				const startNode = grid[this.state.startRow][this.state.startColumn];
 				const finishNode = grid[this.state.finishRow][this.state.finishColumn];
+				let start = 0;
+				let finish = 0;
 
 				if(this.state.algorithm === 'Dijkstra') {
+					start = window.performance.now(); // Start measuring time
 					const visitedNodesInOrder = dijkstra(grid, startNode, finishNode)
+					finish = window.performance.now(); // Stop measuring time
 					const nodesInShortestPathOrder = backtrackDijkstra(finishNode);
 					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
 				}
 
 				if(this.state.algorithm === 'A*') {
+					start = window.performance.now(); // Start measuring time
 					const visitedNodesInOrder = aStar(grid, startNode, finishNode, this.state.heuristicType, this.state.allowDiagonal)
+					finish = window.performance.now(); // Stop measuring time
 					const nodesInShortestPathOrder = backtrackAStar(finishNode);
 					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
 				}
 
 				if(this.state.algorithm === 'BFS') {
+					start = window.performance.now(); // Start measuring time
 					const visitedNodesInOrder = BFS(grid, startNode, finishNode, this.state.allowDiagonal)
+					finish = window.performance.now(); // Stop measuring time
 					const nodesInShortestPathOrder = backtrackBFS(finishNode);
 					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
 				}
 				/* Add More */
+
+				if(start && finish)	
+					this.setState({timeTaken: finish-start})
 				
 			});
 		} else {
@@ -292,10 +309,6 @@ export default class Grid extends Component {
 				this.togglePopup();
 			});
 		}
-
-		let finish = window.performance.now();
-		let timeTaken = finish-start;
-		this.setState({timeTaken: timeTaken})
 	}
 
 	animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder) {

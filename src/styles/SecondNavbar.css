@@ -32,3 +32,8 @@
   .SecondNavbar .time {
       margin-left: 10px;
   }
+
+  .SecondNavbar .time span {
+    color: #4BB543;
+    text-transform: lowercase;
+  }

@@ -37,10 +37,10 @@ function SecondNavbar({handleChangeHeuristic, timeTaken, handleChangeDiagonal}) 
             </div>
             <div className="flex">
                 <div>Time taken:</div>
-                <p className='time'>{parseFloat(timeTaken).toFixed(3)}</p>
+                <p className='time'><span>{parseFloat(timeTaken).toFixed(3)} ms</span></p>
             </div>
             <div className="flex">
-                <div>Allow diagonal: </div>
+                <div>Allow diagonal search: </div>
                 <Select
                     onChange={diagonal}
                     options={diagonalOptions}
