@@ -47,51 +47,51 @@
   }
 
   .Node-visited {
-    animation-name: visitedAnimation;
+    /* animation-name: visitedAnimation;
     animation-timing-function: ease-out;
     animation-delay: 0;
     animation-direction: alternate;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
-    animation-play-state: running;
+    animation-play-state: running; */
     background-color: rgb(121, 8, 173);
   }
     
   @keyframes visitedAnimation {
     0% {
-      transform: scale(0.3);
+      /* transform: scale(0.3); */
       background-color: rgba(45, 0, 66, 0.75);
-      border-radius: 100%;
+     /*  border-radius: 100%; */
     }
   
-    50% {
+    /* 50% {
+      background-color: rgba(210, 17, 217, 0.75);
+    } */
+  
+    90% {
+      /* transform: scale(1.2); */
       background-color: rgba(210, 17, 217, 0.75);
     }
   
-    75% {
-      transform: scale(1.2);
-      background-color: rgba(40, 0, 217, 0.75);
-    }
-  
     100% {
-      transform: scale(1);
+      /* transform: scale(1); */
       background-color: rgb(121, 8, 173);
     }
   }
   
   .Node-wall {
-    transition: all .2s ease-in-out;
     background-color: rgb(43, 43, 43);
   }
 
+
   .Node-shortest-path {
-    animation-name: shortestPath;
+    /* animation-name: shortestPath;
     animation-timing-function: ease-out;
     animation-delay: 0;
     animation-direction: alternate;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
-    animation-play-state: running;
+    animation-play-state: running; */
     background: rgb(212, 68, 16);
   }
   

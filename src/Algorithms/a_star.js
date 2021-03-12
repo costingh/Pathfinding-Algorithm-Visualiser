@@ -1,3 +1,5 @@
+import { getNeighbors } from '../helpers/helpers.js'
+
 function heuristic(nodeA, nodeB, heuristicType) {
 
     // Manhattan distance
@@ -75,8 +77,8 @@ export function aStar(grid, startNode, finishNode, heuristicType, allowDiagonal)
 
             if(gScoreIsBest) {
                 // an potimal path was found
-                // update parent, f, and g score
-                neighbor.parent = currentNode;
+                // update previousNode, f, and g score
+                neighbor.previousNode = currentNode;
                 neighbor.g = gScore;
                 neighbor.f = neighbor.g + neighbor.h;
             }
@@ -85,67 +87,4 @@ export function aStar(grid, startNode, finishNode, heuristicType, allowDiagonal)
 
     // Path not found
     return [];
-}
-
-
-function getNeighbors(node, grid, allowDiagonal) {
-    let neighbors = [];
-    let x = node.row;
-    let y = node.col;
-
-    // West
-    if(grid[x-1] && grid[x-1][y]) {
-        neighbors.push(grid[x-1][y]);
-    }
-
-    // East
-    if(grid[x+1] && grid[x+1][y]) {
-        neighbors.push(grid[x+1][y]);
-    }
-
-    // South
-    if(grid[x][y-1] && grid[x][y-1]) {
-        neighbors.push(grid[x][y-1]);
-    }
-
-    // North
-    if(grid[x][y+1] && grid[x][y+1]) {
-        neighbors.push(grid[x][y+1]);
-    }
-
-    if(allowDiagonal) {
-        // Southwest
-        if(grid[x-1] && grid[x-1][y-1]) {
-            neighbors.push(grid[x-1][y-1]);
-        }
-
-        // Southeast
-        if(grid[x+1] && grid[x+1][y-1]) {
-            neighbors.push(grid[x+1][y-1]);
-        }
-
-        // Northwest
-        if(grid[x-1] && grid[x-1][y+1]) {
-            neighbors.push(grid[x-1][y+1]);
-        }
-
-        // Northeast
-        if(grid[x+1] && grid[x+1][y+1]) {
-            neighbors.push(grid[x+1][y+1]);
-        }
-    }
-
-    return neighbors;
-}
-
-// Backtracks from the finishNode to find the shortest path.
-// Only works when called *after* the aStar method above.
-export function backtrackAStar(finishNode) {
-    const nodesInShortestPathOrder = [];
-    let currentNode = finishNode;
-    while (currentNode !== null) {
-        nodesInShortestPathOrder.unshift(currentNode);
-        currentNode = currentNode.parent;
-    }
-    return nodesInShortestPathOrder;
 }

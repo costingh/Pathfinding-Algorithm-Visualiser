@@ -1,7 +1,9 @@
 import Node from "./Node";
-import { dijkstra, backtrackDijkstra } from '../Algorithms/dijkstra';
-import {aStar, backtrackAStar} from '../Algorithms/a_star';
-import { BFS, backtrackBFS } from "../Algorithms/breadthFirstSearch";
+import { dijkstra } from '../Algorithms/dijkstra';
+import {aStar} from '../Algorithms/a_star';
+import { BFS } from "../Algorithms/breadthFirstSearch";
+import { DFS } from "../Algorithms/depthFirstSearch";
+import { backtrackPath } from '../helpers/helpers.js';
 import React, { Component } from 'react';
 import Popup from './Popup';
 import { InfoTab } from './InfoTab';
@@ -9,9 +11,6 @@ import Navbar from './Navbar';
 
 import '../styles/Grid.css';
 import SecondNavbar from "./SecondNavbar";
-
-/* de verificat drag and drop : cand incerci sa muti un nod, dar il pui in locul de unde il iei, eroare... */
-
 
 export default class Grid extends Component {
 	constructor() {
@@ -56,8 +55,7 @@ export default class Grid extends Component {
 			previousNode: null,
 			f: 0,
 			g: 0,
-			h: 0,
-			parent: null
+			h: 0
 		};
 	};
 
@@ -68,15 +66,10 @@ export default class Grid extends Component {
 		return newGrid;
 	};
 
-	drawTargetNode(grid, row, col) {
-		const newGrid = grid.slice();
-		newGrid[row][col].isFinish = true;
-		return newGrid;
-	};
-
 	getInitialGrid() {
-		const height = document.querySelector('.Grid').clientHeight;
-		const width = document.querySelector('.Grid').clientWidth;
+		const element = document.querySelector('.Grid');
+		const height = element.clientHeight;
+		const width = element.clientWidth;
 		const numberOfRows = Math.floor(height / 35);
 		const numberOfColumns = Math.floor(width / 35);
 		const grid = [];
@@ -153,8 +146,6 @@ export default class Grid extends Component {
 	}
 
 	handleMouseDown(row, col) {
-		/* if (this.state.running || this.state.grid[row][col].isStart) return; */
-
 		if (this.state.running) return;
 
 		if (this.state.grid[row][col].isStart) {
@@ -167,7 +158,7 @@ export default class Grid extends Component {
 			return;
 		}
 
-		if (!this.state.grid[row][col].isFinish && !this.state.finished) {
+		if (!this.state.finished) {
 			const newGrid = this.drawWall(this.state.grid, row, col);
 			this.setState({ grid: newGrid, mouseIsPressed: true });
 		}
@@ -200,6 +191,7 @@ export default class Grid extends Component {
 
 		if(this.state.finishNodeIsBeingDragged) {
 			if(isWall) return;
+			// Get the previous node from the grid, that still has isFinish=true, and set it to false
 			let previousFinishNode = document.querySelector('#dragtarget');
 			if(previousFinishNode) {
 				const prevRow = parseInt(previousFinishNode.parentNode.id.split('-')[1]);
@@ -208,9 +200,39 @@ export default class Grid extends Component {
 					grid[prevRow][prevCol].isFinish = false;
 			}
 				
-				
 			grid[row][col].isFinish = true;
 			this.setState({finishColumn: col, finishRow: row });
+
+			// automatic recomputation
+			if(this.state.finished) {
+				if (grid[row][col].isWall) return;
+				const startNode = grid[this.state.startRow][this.state.startColumn];
+				const finishNode = grid[row][col];
+
+				if(this.state.algorithm === 'Dijkstra') {
+					const visitedNodesInOrder = dijkstra(grid, startNode, finishNode)
+					const nodesInShortestPathOrder = backtrackPath(finishNode);
+					this.onDragRecomputation(visitedNodesInOrder, nodesInShortestPathOrder);
+				}
+
+				if(this.state.algorithm === 'A*') {
+					const visitedNodesInOrder = aStar(grid, startNode, finishNode, this.state.heuristicType, this.state.allowDiagonal)
+					const nodesInShortestPathOrder = backtrackPath(finishNode);
+					this.onDragRecomputation(visitedNodesInOrder, nodesInShortestPathOrder);
+				}
+
+				if(this.state.algorithm === 'BFS') {
+					const visitedNodesInOrder = BFS(grid, startNode, finishNode, this.state.allowDiagonal)
+					const nodesInShortestPathOrder = backtrackPath(finishNode);
+					this.onDragRecomputation(visitedNodesInOrder, nodesInShortestPathOrder);
+				}
+
+				if(this.state.algorithm === 'DFS') {
+					const visitedNodesInOrder = DFS(grid, startNode, finishNode, this.state.allowDiagonal)
+					const nodesInShortestPathOrder = backtrackPath(finishNode);
+					this.onDragRecomputation(visitedNodesInOrder, nodesInShortestPathOrder);
+				}
+			}
 		}
 	}
 
@@ -218,25 +240,25 @@ export default class Grid extends Component {
 		this.setState({ mouseIsPressed: false, startNodeIsBeingDragged: false, finishNodeIsBeingDragged: false });
 	}
 
-	realTimeComputingDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {		/* Compute the shorthest-path in when dragging the target node */
-		for (let node of document.getElementsByClassName(`Node Node-visited`))		/* Remove the class of visited nodes, and add it correctly */
-			node.classList.remove('Node-visited');
+	onDragRecomputation(visitedNodesInOrder, nodesInShortestPathOrder) {		
+		// Remove the class of visited nodes, and add it correctly 
+		// Remove the class of shortest path nodes, and add it correctly 
+		const visitedNodes = document.getElementsByClassName(`Node Node-visited`);
+		const shortestPathNodes = document.getElementsByClassName(`Node Node-shortest-path`);
+
+		for (let i=0; i<visitedNodes.length; i++)
+			visitedNodes[i].classList.remove('Node-visited');
 		for (let node of visitedNodesInOrder)
 			document.getElementById(`Node-${node.row}-${node.col}`).className = 'Node Node-visited';
-		this.computeShortestPath(nodesInShortestPathOrder);
-	}
-
-	computeShortestPath(nodesInShortestPathOrder) {
-		for (let node of document.getElementsByClassName(`Node Node-shortest-path`)) 		/* Remove the class of shortest path nodes, and add it correctly */
-			node.classList.remove('Node-shortest-path');
-
+		for(let i=0; i<shortestPathNodes.length; i++) 
+			shortestPathNodes[i].classList.remove('Node-shortest-path')
 		for (let node of nodesInShortestPathOrder)
 			document.getElementById(`Node-${node.row}-${node.col}`).className = 'Node Node-shortest-path';
 	}
 
 	visualizeCurrentAlgorithm() {
 		if (this.state.running) {
-			alert('Already running!');
+			alert('Already running!'); 
 			return;
 		}
 		if (this.state.finished || this.state.running) {
@@ -264,7 +286,7 @@ export default class Grid extends Component {
 					start = window.performance.now(); // Start measuring time
 					const visitedNodesInOrder = dijkstra(grid, startNode, finishNode)
 					finish = window.performance.now(); // Stop measuring time
-					const nodesInShortestPathOrder = backtrackDijkstra(finishNode);
+					const nodesInShortestPathOrder = backtrackPath(finishNode);
 					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
 				}
 
@@ -272,7 +294,7 @@ export default class Grid extends Component {
 					start = window.performance.now(); // Start measuring time
 					const visitedNodesInOrder = aStar(grid, startNode, finishNode, this.state.heuristicType, this.state.allowDiagonal)
 					finish = window.performance.now(); // Stop measuring time
-					const nodesInShortestPathOrder = backtrackAStar(finishNode);
+					const nodesInShortestPathOrder = backtrackPath(finishNode);
 					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
 				}
 
@@ -280,9 +302,18 @@ export default class Grid extends Component {
 					start = window.performance.now(); // Start measuring time
 					const visitedNodesInOrder = BFS(grid, startNode, finishNode, this.state.allowDiagonal)
 					finish = window.performance.now(); // Stop measuring time
-					const nodesInShortestPathOrder = backtrackBFS(finishNode);
+					const nodesInShortestPathOrder = backtrackPath(finishNode);
 					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
 				}
+
+				if(this.state.algorithm === 'DFS') {
+					start = window.performance.now(); // Start measuring time
+					const visitedNodesInOrder = DFS(grid, startNode, finishNode, this.state.allowDiagonal)
+					finish = window.performance.now(); // Stop measuring time
+					const nodesInShortestPathOrder = backtrackPath(finishNode);
+					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
+				}
+
 				/* Add More */
 
 				if(start && finish)	
