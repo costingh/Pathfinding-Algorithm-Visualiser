@@ -152,53 +152,18 @@ export default class Grid extends Component {
 		this.generateRandomStart();
 	}
 
-	dragHandler(event, row, col) {
-		/* const { grid } = this.state;
-		if (grid[row][col].isWall) return;
-
-		if (grid[row][col].isStart) {
-			event.dataTransfer.setData("Start", event.target.id);
-			this.setState({
-				startNodeIsBeingDragged: true
-			});
-			return;
-		}
-		if (grid[row][col].isFinish) {
-			event.dataTransfer.setData("Finish", event.target.id);
-			this.setState({
-				finishNodeIsBeingDragged: true
-			});
-		} */
-	}
-
-	DropHandler(event, row, col) {
-		/* event.preventDefault();
-		if (this.state.startNodeIsBeingDragged) {
-			let data = event.dataTransfer.getData("Start");
-			event.target.appendChild(document.getElementById(data));
-			this.setState({ mouseIsPressed: false, startRow: row, startColumn: col, startNodeIsBeingDragged: false });
-			return;
-		}
-		if (this.state.finishNodeIsBeingDragged) {
-			let data = event.dataTransfer.getData("Finish");
-			event.target.appendChild(document.getElementById(data));
-			this.setState({ mouseIsPressed: false, finishRow: row, finishColumn: col, finishtNodeIsBeingDragged: false });
-			return;
-		} */
-	}
-
-	DropOverHandler(event, row, col) {
-		/* event.preventDefault(); */
-	}
-
 	handleMouseDown(row, col) {
 		/* if (this.state.running || this.state.grid[row][col].isStart) return; */
 
 		if (this.state.running) return;
 
 		if (this.state.grid[row][col].isStart) {
-			this.state.grid[row][col].isStart = false
 			this.setState({mouseIsPressed: true, startNodeIsBeingDragged: true})
+			return;
+		}
+
+		if (this.state.grid[row][col].isFinish) {
+			this.setState({mouseIsPressed: true, finishNodeIsBeingDragged: true})
 			return;
 		}
 
@@ -208,14 +173,13 @@ export default class Grid extends Component {
 		}
 	}
 
-
 	handleMouseEnter(row, col) {
 		if (!this.state.mouseIsPressed || this.state.running) return;
 
 		const { grid } = this.state;
 		let { isFinish, isStart, isWall } = grid[row][col];
 
-		if (!isFinish && !this.state.finished && !this.state.startNodeIsMoving && !isStart && !this.state.startNodeIsBeingDragged) {
+		if (!isFinish && !this.state.finished && !this.state.startNodeIsMoving && !isStart && !this.state.startNodeIsBeingDragged && !this.state.finishNodeIsBeingDragged) {
 			const newGrid = this.drawWall(this.state.grid, row, col);
 			this.setState({ grid: newGrid });
 		}
@@ -224,17 +188,27 @@ export default class Grid extends Component {
 			if(isWall) return;
 			let previousStartNode = document.querySelector('#dragstart');
 			if( previousStartNode ) {
-				console.log(previousStartNode);
 				previousStartNode.remove();
 			}
 				
-		this.state.grid[row][col].isStart = true;
-		this.setState({startColumn: col, startRow: row });
+			grid[row][col].isStart = true;
+			this.setState({startColumn: col, startRow: row });
+		}
+
+		if(this.state.finishNodeIsBeingDragged) {
+			if(isWall) return;
+			let previousFinishNode = document.querySelector('#dragtarget');
+			if( previousFinishNode ) {
+				previousFinishNode.remove();
+			}
+				
+			grid[row][col].isFinish = true;
+			this.setState({finishColumn: col, finishRow: row });
 		}
 	}
 
 	handleMouseUp() {
-		this.setState({ mouseIsPressed: false, startNodeIsBeingDragged: false });
+		this.setState({ mouseIsPressed: false, startNodeIsBeingDragged: false, finishNodeIsBeingDragged: false });
 	}
 
 	realTimeComputingDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {		/* Compute the shorthest-path in when dragging the target node */
@@ -465,9 +439,6 @@ export default class Grid extends Component {
 											onMouseDown={(row, col) => this.handleMouseDown(row, col)}
 											onMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
 											onMouseUp={() => this.handleMouseUp()}
-											onDragOver={(event, row, col) => this.DropOverHandler(event, row, col)}
-											onDrop={(event, row, col) => this.DropHandler(event, row, col)}
-											onDragStart={(event, row, col) => this.dragHandler(event, row, col)}
 										>
 										</Node>
 									);

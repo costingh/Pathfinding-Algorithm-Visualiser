@@ -5,17 +5,14 @@ import '../styles/Node.css';
 export default class Node extends Component {
   render() {
     const {
+      row,
       col,
       isFinish,
       isStart,
       isWall,
+      onMouseUp,
       onMouseDown,
       onMouseEnter,
-      onMouseUp,
-      onDrop,
-      onDragOver,
-      onDragStart,
-      row,
     } = this.props;   
 
     return (
@@ -25,21 +22,9 @@ export default class Node extends Component {
         onMouseDown={() => onMouseDown(row, col)}
         onMouseEnter={() => onMouseEnter(row, col)}
         onMouseUp={() => onMouseUp()}
-        onDrop={(event) => onDrop(event, row, col)}
-        onDragOver={(event) => onDragOver(event, row, col)}
-        onDragStart={(event) => onDragStart(event, row, col)}
       >
-        {isStart && <div
-            id={'dragstart'}
-            >
-        </div>
-        }
-
-        {/* {isFinish && <div draggable="true"
-            id={'dragtarget'}
-            onDragStart={this.onDragStart}>
-        </div>
-        } */}
+        {isStart && <div id={'dragstart'}></div>}                               
+        {isFinish && <div id={'dragtarget'}></div>}      
       </div>
     );
   }
