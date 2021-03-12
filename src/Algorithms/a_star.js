@@ -62,7 +62,7 @@ export function aStar(grid, startNode, finishNode, heuristicType, allowDiagonal)
             // gScore is the shortest distance from start to current node,
             // we need to check if the path we have arrived at this 
             //neighbor is the shortest one we have seen yet
-            let gScore = currentNode.g +1;
+            let gScore = currentNode.g + 1;
             let gScoreIsBest = false;
 
             if(!openList.includes(neighbor)) {
@@ -81,6 +81,7 @@ export function aStar(grid, startNode, finishNode, heuristicType, allowDiagonal)
                 neighbor.previousNode = currentNode;
                 neighbor.g = gScore;
                 neighbor.f = neighbor.g + neighbor.h;
+                visitedNodes.push(neighbor);
             }
         }
     }

@@ -61,21 +61,18 @@ export function getNeighbors(node, grid, allowDiagonal) {
     if(grid[x-1] && grid[x-1][y]) {
         neighbors.push(grid[x-1][y]);
     }
-    // North
-    if(grid[x][y+1] && grid[x][y+1]) {
-        neighbors.push(grid[x][y+1]);
-    }
-
     // East
     if(grid[x+1] && grid[x+1][y]) {
         neighbors.push(grid[x+1][y]);
     }
-    
     // South
-    if(grid[x][y-1] && grid[x][y-1]) {
+    if(grid[x][y-1]) {
         neighbors.push(grid[x][y-1]);
     }
-
+    // North
+    if(grid[x][y+1]) {
+        neighbors.push(grid[x][y+1]);
+    }
 
     if(allowDiagonal) {
         // Southwest

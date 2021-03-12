@@ -1,39 +1,35 @@
+// Returns all nodes in the order in which they were visited.
+// Make nodes point back to their previous node so that we can compute the shortest path
+// by backtracking from the finish node.
+
+
 import { getNeighbors } from '../helpers/helpers.js'
 
-export function DFS(grid, startNode, finishNode, allowDiagonal) {
-    let stack = []; 
-    let explored = [];
-    let nodesToAnimate = [];
+export function dfs(grid, startNode, finishNode) {
+	const stack = [startNode];
+    const visitedNodesInOrder = [];
 
-    // Add the startNode in stack
-    // Mark the first node as explored
-    stack.push(startNode);
-    explored.push(startNode);
- 
-    // We'll continue till our Stack gets empty
     while (stack.length) {
-       let currentNode = stack.pop();
-       nodesToAnimate.push(currentNode);
+      const currentNode = stack.pop();
+  
+      if (currentNode === finishNode) return visitedNodesInOrder;
+  
+	  if (!currentNode.isWall && (currentNode.isStart || !currentNode.isVisited)) {
+		currentNode.isVisited = true;
+		visitedNodesInOrder.push(currentNode);
+   
+		let neighbors = getNeighbors(currentNode, grid, false)
 
-        // Stop if the currentNode is the target
-        if(currentNode === finishNode) {
-            return nodesToAnimate;
-        }
- 
-        // 1. In the neighbours array, we stored nodes this node is directly connected to.
-        // 2. We filter out the nodes that have already been explored.
-        // 3. Then we mark each unexplored node as explored and push it to the Stack.
-        let neighbors = getNeighbors(currentNode, grid, false)
-        neighbors
-        .filter(neighbor => !explored.includes(neighbor))
-        .forEach(neighbor => {
-            if(!neighbor.isWall) {
-                explored.push(neighbor);
-                stack.push(neighbor);
-                neighbor.previousNode = currentNode;
-            }
-        });
-    }
-    // Target not found
-    return []
- }
+		neighbors
+			.forEach(neighbor => {
+				if(!neighbor.isVisited) {
+					neighbor.previousNode = currentNode;
+					stack.push(neighbor);
+				}
+			});
+		}
+	}
+	
+	// No path found
+	return []
+}

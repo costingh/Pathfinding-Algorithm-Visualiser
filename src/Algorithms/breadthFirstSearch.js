@@ -1,33 +1,37 @@
+// Returns all nodes in the order in which they were visited.
+// Make nodes point back to their previous node so that we can compute the shortest path
+// by backtracking from the finish node.
+
+
 import { getNeighbors } from '../helpers/helpers.js'
 
-export function BFS(grid, startNode, finishNode, allowDiagonal) {
-    let queue = [];
-    let explored = [];
-    let nodesToAnimate = [];
-
-    queue.push(startNode);
-    explored.push(startNode);
+export function bfs(grid, startNode, finishNode, allowDiagonal) {
+    let queue = [startNode];
+    let visitedNodesInOrder = [];
 
     while (queue.length) {
        let currentNode = queue.shift();
-       nodesToAnimate.push(currentNode);
+       visitedNodesInOrder.push(currentNode);
 
-       if(currentNode === finishNode) {
-           return nodesToAnimate;
-       }
+       if(currentNode === finishNode) return visitedNodesInOrder;
 
-       let neighbors = getNeighbors(currentNode, grid, allowDiagonal)
+       if (!currentNode.isWall && (currentNode.isStart || !currentNode.isVisited)) {
+            currentNode.isVisited = true;
+            visitedNodesInOrder.push(currentNode);
+       
+            let neighbors = getNeighbors(currentNode, grid, allowDiagonal)
 
-       neighbors
-       .filter(neighbor => !explored.includes(neighbor))
-       .forEach(neighbor => {
-            if(!neighbor.isWall) {
-                explored.push(neighbor);
-                queue.push(neighbor);
-                neighbor.previousNode = currentNode;
-            }
-       });
+            neighbors
+            .forEach(neighbor => {
+                if(!neighbor.isVisited) {
+                    neighbor.previousNode = currentNode;
+                    queue.push(neighbor);
+                }
+            });
+        }
     }
+
+    // No path found
     return []
  }
 

@@ -1,8 +1,8 @@
 import Node from "./Node";
 import { dijkstra } from '../Algorithms/dijkstra';
 import {aStar} from '../Algorithms/a_star';
-import { BFS } from "../Algorithms/breadthFirstSearch";
-import { DFS } from "../Algorithms/depthFirstSearch";
+import { bfs } from "../Algorithms/breadthFirstSearch";
+import { dfs } from "../Algorithms/depthFirstSearch";
 import { backtrackPath } from '../helpers/helpers.js';
 import React, { Component } from 'react';
 import Popup from './Popup';
@@ -222,13 +222,13 @@ export default class Grid extends Component {
 				}
 
 				if(this.state.algorithm === 'BFS') {
-					const visitedNodesInOrder = BFS(grid, startNode, finishNode, this.state.allowDiagonal)
+					const visitedNodesInOrder = bfs(grid, startNode, finishNode, this.state.allowDiagonal)
 					const nodesInShortestPathOrder = backtrackPath(finishNode);
 					this.onDragRecomputation(visitedNodesInOrder, nodesInShortestPathOrder);
 				}
 
 				if(this.state.algorithm === 'DFS') {
-					const visitedNodesInOrder = DFS(grid, startNode, finishNode, this.state.allowDiagonal)
+					const visitedNodesInOrder = dfs(grid, startNode, finishNode, this.state.allowDiagonal)
 					const nodesInShortestPathOrder = backtrackPath(finishNode);
 					this.onDragRecomputation(visitedNodesInOrder, nodesInShortestPathOrder);
 				}
@@ -300,7 +300,7 @@ export default class Grid extends Component {
 
 				if(this.state.algorithm === 'BFS') {
 					start = window.performance.now(); // Start measuring time
-					const visitedNodesInOrder = BFS(grid, startNode, finishNode, this.state.allowDiagonal)
+					const visitedNodesInOrder = bfs(grid, startNode, finishNode, this.state.allowDiagonal)
 					finish = window.performance.now(); // Stop measuring time
 					const nodesInShortestPathOrder = backtrackPath(finishNode);
 					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
@@ -308,7 +308,7 @@ export default class Grid extends Component {
 
 				if(this.state.algorithm === 'DFS') {
 					start = window.performance.now(); // Start measuring time
-					const visitedNodesInOrder = DFS(grid, startNode, finishNode, this.state.allowDiagonal)
+					const visitedNodesInOrder = dfs(grid, startNode, finishNode, this.state.allowDiagonal)
 					finish = window.performance.now(); // Stop measuring time
 					const nodesInShortestPathOrder = backtrackPath(finishNode);
 					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
