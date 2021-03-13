@@ -227,7 +227,7 @@ export default class Grid extends Component {
 		let start = 0;
 		let finish = 0;
 		let visitedNodesInOrder = [];
-
+		this.setState({running:true})
 		start = window.performance.now(); // Start measuring time
 
 		switch(algorithm) {
@@ -263,24 +263,9 @@ export default class Grid extends Component {
 
 		if(this.state.finished) {
 			this.resetAll(() => {
-				this.visualizeCurrentAlgorithm()
+				this.calculatePath()
 			})
 			return;
-			/* const { startRow, startColumn, finishRow, finishColumn, grid } = this.state;
-			this.resetAll(() => {
-				this.setState({
-					grid: grid,
-					running: true,
-					finished: false,
-					startRow: startRow,
-					startColumn: startColumn,
-					finishRow: finishRow,
-					finishColumn: finishColumn,
-				}, ()=> {
-					this.calculatePath();
-					return;
-				});
-			})  */
 		}
 
 		this.setState({ running: true }, () => {
@@ -327,25 +312,74 @@ export default class Grid extends Component {
 			return;
 		}
 
-		const { startRow, startColumn, finishRow, finishColumn, finished } = this.state;
+		const { grid } = this.state;
+		for(let row=0; row < grid.length; row++) {
+			for(let col=0; col < grid[0].length; col++) {
+				grid[row][col].distance = Infinity; 
+				grid[row][col].isVisited = false; 
+				grid[row][col].previousNode = null; 
+				grid[row][col].f = 0; 
+				grid[row][col].g = 0; 
+				grid[row][col].h = 0; 
+			}
+		}
+
 		this.setState({
-			grid: [],
-			startRow: finished ? startRow : -1,
-			startColumn: finished ? startColumn : -1,
-			finishRow: finished ? finishRow : -1,
-			finishColumn: finished ? finishColumn : -1,
+			grid: grid,
+			running: false,
+			finished: false
 		}, () => {
-			this.setState({
-				grid: this.getInitialGrid(),
-				running: false,
-				finished: false
-			}, () => {
-				typeof callback == "function" && callback();
-				return;
-			});
+			const visitedNodes = document.querySelectorAll('.Node-visited')
+			const shortestPathNodes = document.querySelectorAll('.Node-shortest-path')
+
+			// Clear grid, but let walls
+			for(let i=0; i< visitedNodes.length; i++ )
+				visitedNodes[i].classList.remove('Node-visited');
+			for(let i=0; i< shortestPathNodes.length; i++ )
+				shortestPathNodes[i].classList.remove('Node-shortest-path')
+
+			typeof callback == "function" && callback();
+			return;
 		});
 	}
 
+	/* clearWalls() {
+		if (this.state.running) {
+			alert('Running!');
+			return;
+		}
+
+		const { grid } = this.state;
+		for(let row=0; row < grid.length; row++) {
+			for(let col=0; col < grid[0].length; col++) {
+				grid[row][col].distance = Infinity; 
+				grid[row][col].isVisited = false; 
+				grid[row][col].previousNode = null; 
+				grid[row][col].f = 0; 
+				grid[row][col].g = 0; 
+				grid[row][col].h = 0; 
+			}
+		}
+
+		this.setState({
+			grid: grid,
+			running: false,
+			finished: false
+		}, () => {
+			const visitedNodes = document.querySelectorAll('.Node-visited')
+			const shortestPathNodes = document.querySelectorAll('.Node-shortest-path')
+
+			// Clear grid, but let walls
+			for(let i=0; i< visitedNodes.length; i++ )
+				visitedNodes[i].classList.remove('Node-visited');
+			for(let i=0; i< shortestPathNodes.length; i++ )
+				shortestPathNodes[i].classList.remove('Node-shortest-path')
+
+			typeof callback == "function" && callback();
+			return;
+		});
+	}
+ */
 	handleChangeSpeed(speed) {
 		this.setState({ animationSpeed: speed });
 	}
