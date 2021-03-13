@@ -1,28 +1,28 @@
 .Node {
     width: 25px;
     height: 25px;
-    /* outline: 1px solid rgb(37, 37, 37); */
-    outline: 1px solid rgb(165, 165, 165);
+    outline: 1px solid rgb(37, 37, 37);
+    /* outline: 1px solid rgb(165, 165, 165); */
     display: inline-block;
     position: relative;
   }
 
   #dragstart::before {
     position: absolute;
+    top: 50%;
+    left: 50%;
     content: '';
     display: inline-block;
     width: 10px;
     height: 10px;
     border-right: 4px solid black;
     border-top: 4px solid black;
-    transform: rotate(45deg) scale(1.2);
-    top: 10px;
-    left: 7px;
+    transform: translate(-50%, -50%) rotate(45deg) scale(1.2);
     transition: all .2s ease-in-out;
   }
 
   #dragstart:hover::before {
-    transform: rotate(45deg) scale(0.5);
+    transform: translate(-50%, -50%) rotate(45deg) scale(0.5);
   }
    
   #dragstart {

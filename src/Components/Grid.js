@@ -379,7 +379,7 @@ export default class Grid extends Component {
 		const { grid, mouseIsPressed, running } = this.state;
 		return (
 			<div className="Wrapper">
-				{/* <InfoTab></InfoTab> */}
+				<InfoTab></InfoTab>
 				<Navbar
 					clearPath={this.resetAll.bind(this)}
 					changeSpeed={this.handleChangeSpeed.bind(this)}
