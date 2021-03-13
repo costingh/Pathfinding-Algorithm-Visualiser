@@ -19,11 +19,11 @@ export function bfs(grid, startNode, finishNode, allowDiagonal) {
             currentNode.isVisited = true;
             visitedNodesInOrder.push(currentNode);
        
-            let neighbors = getNeighbors(currentNode, grid, allowDiagonal)
+            let neighbors = getNeighbors(currentNode, grid, false)
 
             neighbors
             .forEach(neighbor => {
-                if(!neighbor.isVisited) {
+                if(!neighbor.isVisited && !neighbor.isWall) {
                     neighbor.previousNode = currentNode;
                     queue.push(neighbor);
                 }

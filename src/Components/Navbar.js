@@ -4,7 +4,7 @@ import Select from 'react-select';
 import '../styles/Navbar.css';
 
 function Navbar(props) {                
-    const {clearPath, changeSpeed, runAlgorithm, changeAlgorithm, setRandomStart, setRandomFinish } = props
+    const {clearPath, changeSpeed, runAlgorithm, changeAlgorithm } = props
     const algorithmOptions = [
         { value: 'Dijkstra', label: 'Dijkstra' },
         { value: 'A*', label: 'A*' },
@@ -30,11 +30,11 @@ function Navbar(props) {
     return (
         <>
             <nav className="Navbar">
-                <div className="flex button-generate-start" onClick={setRandomStart}>
+                <div className="flex button-generate-start">
                     <div className="start"></div>
                     <div>Start</div>
                 </div>
-                <div className="flex button-generate-finish" onClick={setRandomFinish}>
+                <div className="flex button-generate-finish">
                     <div className="target"></div>
                     <div>Target</div>
                 </div>

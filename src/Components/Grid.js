@@ -5,12 +5,13 @@ import { bfs } from "../Algorithms/breadthFirstSearch";
 import { dfs } from "../Algorithms/depthFirstSearch";
 import { backtrackPath } from '../helpers/helpers.js';
 import React, { Component } from 'react';
-import Popup from './Popup';
 import { InfoTab } from './InfoTab';
 import Navbar from './Navbar';
 
 import '../styles/Grid.css';
 import SecondNavbar from "./SecondNavbar";
+
+const nodeDimension = 35;
 
 export default class Grid extends Component {
 	constructor() {
@@ -26,11 +27,6 @@ export default class Grid extends Component {
 			startColumn: -1,
 			finishRow: -1,
 			finishColumn: -1,
-			showPopup: false,
-			popupHeader: '',
-			popupDescription: '',
-			popupButton: '',
-			runAgain: false,
 			startNodeIsBeingDragged: false,
 			finishNodeIsBeingDragged: false,
 			heuristicType: 'euclidean',
@@ -70,8 +66,8 @@ export default class Grid extends Component {
 		const element = document.querySelector('.Grid');
 		const height = element.clientHeight;
 		const width = element.clientWidth;
-		const numberOfRows = Math.floor(height / 35);
-		const numberOfColumns = Math.floor(width / 35);
+		const numberOfRows = Math.floor(height / nodeDimension);
+		const numberOfColumns = Math.floor(width / nodeDimension);
 		const grid = [];
 
 		for (let row = 0; row < numberOfRows; row++) {
@@ -81,69 +77,37 @@ export default class Grid extends Component {
 			}
 			grid.push(currentRow);
 		}
+
+		const { startRow, startColumn, finishRow, finishColumn} = this.state;
+		if(startRow === -1 || startColumn === -1 || finishRow === -1 || finishColumn === -1 ) {
+			const startCoord = {
+				x: Math.floor(numberOfRows/2),
+				y: Math.floor(numberOfColumns/4),
+			}
+			const finishCoord = {
+				x: Math.floor(numberOfRows/2),
+				y: Math.floor(numberOfColumns*3/4)
+			}
+	
+			grid[startCoord.x][startCoord.y].isStart = true;
+			grid[finishCoord.x][finishCoord.y].isFinish = true;
+	
+			this.setState({
+				startRow: startCoord.x,
+				startColumn: startCoord.y,
+				finishRow: finishCoord.x,
+				finishColumn: finishCoord.y,
+			})
+		} else {
+			this.setState({
+				startRow,
+				startColumn,
+				finishRow,
+				finishColumn,
+			})
+		}
 		return grid;
 	};
-
-	initiateNodes() {
-		this.setRandomStart();
-		this.generateRandomFinish();
-	}
-
-	generateRandomFinish() {
-		const { grid, finishRow, finishColumn } = this.state;
-		const numberOfRows = grid.length;
-		const numberOfColumns = grid[0].length;
-		let randomRow;
-		let randomColumn;
-
-		if (finishRow > -1 && finishColumn > -1)
-			for (let finishNode of document.querySelectorAll('#dragfinish'))
-				finishNode.remove();
-
-		do {
-			randomRow = Math.floor((Math.random() * numberOfRows));
-			randomColumn = Math.floor((Math.random() * numberOfColumns));
-		} while (grid[randomRow][randomColumn].isWall || grid[randomRow][randomColumn].isStart);
-
-		grid[randomRow][randomColumn].isFinish = true;
-		this.setState({ grid: grid, finishRow: randomRow, finishColumn: randomColumn });
-	}
-
-	generateRandomStart() {
-		const { grid, startRow, startColumn } = this.state;
-		const numberOfRows = grid.length;
-		const numberOfColumns = grid[0].length;
-		let randomRow;
-		let randomColumn;
-
-		if (startRow > -1 && startColumn > -1)
-			for (let startNode of document.querySelectorAll('#dragstart'))
-				startNode.remove();
-
-		do {
-			randomRow = Math.floor((Math.random() * numberOfRows));
-			randomColumn = Math.floor((Math.random() * numberOfColumns));
-		} while (grid[randomRow][randomColumn].isWall || grid[randomRow][randomColumn].isFinish);
-
-		grid[randomRow][randomColumn].isStart = true;
-		this.setState({ grid: grid, startRow: randomRow, startColumn: randomColumn });
-	}
-
-	setRandomStart() {
-		if (this.state.showPopup) this.setState({ showPopup: false });
-		if (this.state.finished && !this.state.running) {
-			this.resetAll(() => {
-				this.generateRandomStart();
-			});
-			return;
-		}
-
-		if (this.state.running) {
-			alert('The program is already running. You cannot generate a random start node until execution finishes!');
-			return;
-		}
-		this.generateRandomStart();
-	}
 
 	handleMouseDown(row, col) {
 		if (this.state.running) return;
@@ -256,90 +220,73 @@ export default class Grid extends Component {
 			document.getElementById(`Node-${node.row}-${node.col}`).className = 'Node Node-shortest-path';
 	}
 
+	calculatePath() {
+		const {grid, startRow, startColumn, finishRow, finishColumn, algorithm} = this.state;
+		const startNode = grid[startRow][startColumn];
+		const finishNode = grid[finishRow][finishColumn];
+		let start = 0;
+		let finish = 0;
+		let visitedNodesInOrder = [];
+
+		start = window.performance.now(); // Start measuring time
+
+		switch(algorithm) {
+			case 'Dijkstra':
+				visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
+			  	break;
+			case 'A*':
+				visitedNodesInOrder = aStar(grid, startNode, finishNode, this.state.heuristicType, this.state.allowDiagonal)
+				break;
+			case 'BFS':
+				visitedNodesInOrder = bfs(grid, startNode, finishNode, this.state.allowDiagonal)
+				break;
+			case 'DFS':
+				visitedNodesInOrder = dfs(grid, startNode, finishNode, this.state.allowDiagonal)
+				break;
+			default:
+				console.log("Error");
+				return;
+		}
+
+		finish = window.performance.now(); // Stop measuring time
+		const nodesInShortestPathOrder = backtrackPath(finishNode);
+		this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
+		if(start && finish)	
+			this.setState({timeTaken: finish-start})
+	}
+
 	visualizeCurrentAlgorithm() {
 		if (this.state.running) {
 			alert('Already running!'); 
 			return;
 		}
-		if (this.state.finished || this.state.running) {
-			this.setState({
-				popupHeader: "Clear all?",
-				popupDescription: "The previous path is still drawn. Do you want to clear it and see the new one?",
-				popupButton: "Clear it!",
-				runAgain: true
-			}, () => {
-				this.togglePopup();
-			});
+
+		if(this.state.finished) {
+			this.resetAll(() => {
+				this.visualizeCurrentAlgorithm()
+			})
 			return;
+			/* const { startRow, startColumn, finishRow, finishColumn, grid } = this.state;
+			this.resetAll(() => {
+				this.setState({
+					grid: grid,
+					running: true,
+					finished: false,
+					startRow: startRow,
+					startColumn: startColumn,
+					finishRow: finishRow,
+					finishColumn: finishColumn,
+				}, ()=> {
+					this.calculatePath();
+					return;
+				});
+			})  */
 		}
 
-		/* If you click the "Visualize" button, but there is no startNode */
-		if (this.state.startRow !== -1 && this.state.startColumn !== -1) {
-			this.setState({ running: true }, () => {
-				const { grid } = this.state;
-				const startNode = grid[this.state.startRow][this.state.startColumn];
-				const finishNode = grid[this.state.finishRow][this.state.finishColumn];
-				let start = 0;
-				let finish = 0;
-
-				if(this.state.algorithm === 'Dijkstra') {
-					start = window.performance.now(); // Start measuring time
-					const visitedNodesInOrder = dijkstra(grid, startNode, finishNode)
-					finish = window.performance.now(); // Stop measuring time
-					const nodesInShortestPathOrder = backtrackPath(finishNode);
-					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
-				}
-
-				if(this.state.algorithm === 'A*') {
-					start = window.performance.now(); // Start measuring time
-					const visitedNodesInOrder = aStar(grid, startNode, finishNode, this.state.heuristicType, this.state.allowDiagonal)
-					finish = window.performance.now(); // Stop measuring time
-					const nodesInShortestPathOrder = backtrackPath(finishNode);
-					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
-				}
-
-				if(this.state.algorithm === 'BFS') {
-					start = window.performance.now(); // Start measuring time
-					const visitedNodesInOrder = bfs(grid, startNode, finishNode, this.state.allowDiagonal)
-					finish = window.performance.now(); // Stop measuring time
-					const nodesInShortestPathOrder = backtrackPath(finishNode);
-					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
-				}
-
-				if(this.state.algorithm === 'DFS') {
-					start = window.performance.now(); // Start measuring time
-					const visitedNodesInOrder = dfs(grid, startNode, finishNode, this.state.allowDiagonal)
-					finish = window.performance.now(); // Stop measuring time
-					const nodesInShortestPathOrder = backtrackPath(finishNode);
-					this.animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
-				}
-
-				/* Add More */
-
-				if(start && finish)	
-					this.setState({timeTaken: finish-start})
-				
-			});
-		} else {
-			this.setState({
-				popupHeader: "Not found",
-				popupDescription: "The starting node and the finish one were not generated. In order to vizualize the path found by the algorithm, please generate them.",
-				popupButton: "Generate now!"
-			}, () => {
-				this.togglePopup();
-			});
-		}
-
-		/* If you click the "Visualize" button, but there is no finishNode */
-		if (this.state.finishRow === -1 && this.state.finishColumn === -1) {
-			this.setState({
-				popupHeader: "Not found",
-				popupDescription: "The starting node and the finish one were not generated. In order to vizualize the path found by the algorithm, please generate them.",
-				popupButton: "Generate now!"
-			}, () => {
-				this.togglePopup();
-			});
-		}
+		this.setState({ running: true }, () => {
+			if(this.state.startRow === -1 || this.state.startColumn === -1) return;
+			this.calculatePath();
+		}); 
 	}
 
 	animateCurrentAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder) {
@@ -374,46 +321,27 @@ export default class Grid extends Component {
 		});
 	}
 
-	togglePopup() {
-		this.setState({
-			showPopup: !this.state.showPopup
-		});
-	}
-
-	runAgain() {
-		const { startRow, startColumn, finishRow, finishColumn } = this.state;
-		this.resetAll();
-		
-		this.setState({
-			startRow: startRow,
-			startColumn: startColumn,
-			finishRow: finishRow,
-			finishColumn: finishColumn,
-			runAgain: !this.state.runAgain,
-			showPopup: !this.state.showPopup
-		});
-	}
-
 	resetAll(callback) {
 		if (this.state.running) {
 			alert('Running!');
 			return;
 		}
+
+		const { startRow, startColumn, finishRow, finishColumn, finished } = this.state;
 		this.setState({
 			grid: [],
-			startRow: -1,
-			startColumn: -1,
-			finishRow: -1,
-			finishColumn: -1,
-			runAgain: false
+			startRow: finished ? startRow : -1,
+			startColumn: finished ? startColumn : -1,
+			finishRow: finished ? finishRow : -1,
+			finishColumn: finished ? finishColumn : -1,
 		}, () => {
-			const grid = this.getInitialGrid();
 			this.setState({
-				grid: grid,
+				grid: this.getInitialGrid(),
 				running: false,
 				finished: false
 			}, () => {
 				typeof callback == "function" && callback();
+				return;
 			});
 		});
 	}
@@ -439,25 +367,11 @@ export default class Grid extends Component {
 		return (
 			<div className="Wrapper">
 				{/* <InfoTab></InfoTab> */}
-				{this.state.showPopup &&
-					<Popup
-						header={this.state.popupHeader}
-						description={this.state.popupDescription}
-						buttonText={this.state.popupButton}
-						closePopup={() => this.togglePopup()}
-						handleButtonClick={
-							!this.state.runAgain
-								? this.initiateNodes.bind(this)
-								: this.runAgain.bind(this)}
-					/>
-				}
 				<Navbar
 					clearPath={this.resetAll.bind(this)}
 					changeSpeed={this.handleChangeSpeed.bind(this)}
 					runAlgorithm={this.visualizeCurrentAlgorithm.bind(this)}
 					changeAlgorithm={this.handleChangeAlgorithm.bind(this)}
-					setRandomStart={this.setRandomStart.bind(this)}
-					setRandomFinish={this.generateRandomFinish.bind(this)}
 				/>
 				<SecondNavbar 
 					handleChangeHeuristic={this.handleChangeHeuristic.bind(this)}
