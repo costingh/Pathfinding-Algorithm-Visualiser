@@ -37,3 +37,22 @@
     color: #4BB543;
     text-transform: lowercase;
   }
+
+  .SecondNavbar .walls {
+    margin-left: 15px;
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    background: url('../images/bricks.svg') center center no-repeat;
+    background-size: cover;
+    transition: .4s all ease-in-out;
+  }
+
+  .SecondNavbar .wall {
+    cursor: pointer;
+    transition: .4s all ease-in-out;
+  }
+
+  .SecondNavbar .wall:hover {
+    color: #0773e7;
+  }

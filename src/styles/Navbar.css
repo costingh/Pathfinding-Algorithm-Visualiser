@@ -27,7 +27,7 @@
   .Navbar .flex .visited,
   .Navbar .flex .shortest-path,
   .Navbar .flex .wall {
-  width: 20px;
+    width: 20px;
     height: 20px;
     margin-right: 10px;
   }
@@ -63,18 +63,6 @@
     background-size: cover;
     width: 25px;
     height: 25px;
-  }
-
-  .button-generate-start,
-  .button-generate-finish {
-    cursor: pointer;
-    transition: .4s all ease;
-  }
-
-  .button-generate-start:hover,
-  .button-generate-finish:hover {
-    color: #0773e7;
-    
   }
 
   .reset .icon {

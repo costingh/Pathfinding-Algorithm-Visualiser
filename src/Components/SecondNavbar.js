@@ -3,7 +3,7 @@ import Select from 'react-select';
 
 import '../styles/SecondNavbar.css'
 
-function SecondNavbar({handleChangeHeuristic, timeTaken, handleChangeDiagonal}) {
+function SecondNavbar({handleChangeHeuristic, timeTaken, handleChangeDiagonal, clearWalls}) {
     const heuristicOptions = [
         { value: 'euclidean', label: 'Eulcidean' },
         { value: 'manhattan', label: 'Manhattan' },
@@ -38,6 +38,10 @@ function SecondNavbar({handleChangeHeuristic, timeTaken, handleChangeDiagonal}) 
             <div className="flex">
                 <div>Time taken:</div>
                 <p className='time'><span>{parseFloat(timeTaken).toFixed(3)} ms</span></p>
+            </div>
+            <div className="flex wall" onClick={clearWalls}>
+                <div>Clear Walls</div>
+                <div className="walls"></div>
             </div>
             <div className="flex">
                 <div>Allow diagonal search: </div>

@@ -11,7 +11,7 @@ import Navbar from './Navbar';
 import '../styles/Grid.css';
 import SecondNavbar from "./SecondNavbar";
 
-const nodeDimension = 35;
+const nodeDimension = 25;
 
 export default class Grid extends Component {
 	constructor() {
@@ -343,7 +343,8 @@ export default class Grid extends Component {
 		});
 	}
 
-	/* clearWalls() {
+	clearWalls() {
+		console.log('called')
 		if (this.state.running) {
 			alert('Running!');
 			return;
@@ -352,34 +353,12 @@ export default class Grid extends Component {
 		const { grid } = this.state;
 		for(let row=0; row < grid.length; row++) {
 			for(let col=0; col < grid[0].length; col++) {
-				grid[row][col].distance = Infinity; 
-				grid[row][col].isVisited = false; 
-				grid[row][col].previousNode = null; 
-				grid[row][col].f = 0; 
-				grid[row][col].g = 0; 
-				grid[row][col].h = 0; 
+				grid[row][col].isWall = false; 
 			}
 		}
-
-		this.setState({
-			grid: grid,
-			running: false,
-			finished: false
-		}, () => {
-			const visitedNodes = document.querySelectorAll('.Node-visited')
-			const shortestPathNodes = document.querySelectorAll('.Node-shortest-path')
-
-			// Clear grid, but let walls
-			for(let i=0; i< visitedNodes.length; i++ )
-				visitedNodes[i].classList.remove('Node-visited');
-			for(let i=0; i< shortestPathNodes.length; i++ )
-				shortestPathNodes[i].classList.remove('Node-shortest-path')
-
-			typeof callback == "function" && callback();
-			return;
-		});
+		this.setState({ grid });
 	}
- */
+
 	handleChangeSpeed(speed) {
 		this.setState({ animationSpeed: speed });
 	}
@@ -411,6 +390,7 @@ export default class Grid extends Component {
 					handleChangeHeuristic={this.handleChangeHeuristic.bind(this)}
 					handleChangeDiagonal={this.handleChangeDiagonal.bind(this)}
 					timeTaken={this.state.timeTaken}
+					clearWalls={this.clearWalls.bind(this)}
 				/>
 				<div className="Grid">
 					{grid.map((row, rowIndex) => {
