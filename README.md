@@ -35,17 +35,6 @@ Traverses by exploring as far as possible down each path before backtracking.
 As useful as the BFS: DFS can be used to generate a topological ordering, to generate mazes, to traverse trees, to build decision trees, to discover a solution path with hierarchical choices.
 DFS does not guarantee the shortest path.
 
-### Getting Started
-
-#### Installing
-
-* **Run this command** git clone https://github.com/costingh/deploy-pathfinding-visualiser.git
-
-#### Executing program
-
-* Run npm install
-* Run npm start
-
 ### Functionality
 At first on the grid there are two nodes drawn (start and finish). You cand draw obstacles, such like walls, and then choose the algorithm that you want to visualise. After clicking visualise, the algorithm will compute the path from start to finish node, and then you will see the animation.
 
