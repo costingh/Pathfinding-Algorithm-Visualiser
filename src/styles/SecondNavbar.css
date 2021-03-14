@@ -2,9 +2,9 @@
     position: relative;
     background: #f2eff0;
     height: auto;
-    padding: 0px 0px;
+    padding: 10px 0px;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     flex-wrap: wrap; 
     align-items: center;
     text-transform: capitalize;
@@ -28,31 +28,47 @@
     width: 150px;
     margin-left: 10px;
   }
-
-  .SecondNavbar .time {
-      margin-left: 10px;
-  }
-
-  .SecondNavbar .time span {
-    color: #4BB543;
-    text-transform: lowercase;
-  }
-
-  .SecondNavbar .walls {
-    margin-left: 15px;
-    width: 30px;
-    height: 30px;
+  
+  .SecondNavbar .flex .start,
+  .SecondNavbar .flex .target,
+  .SecondNavbar .flex .unvisited,
+  .SecondNavbar .flex .visited,
+  .SecondNavbar .flex .shortest-path,
+  .SecondNavbar .flex .wall {
+    width: 20px;
+    height: 20px;
     margin-right: 10px;
-    background: url('../images/bricks.svg') center center no-repeat;
+  }
+  
+  .SecondNavbar .flex .start {
+    background: url('../images/start-flag.png') center no-repeat;
+      background-size: cover;
+  }
+  
+  .SecondNavbar .flex .target {
+    background: url('../images/circle.png') center no-repeat;
+      background-size: cover;
+  }
+  
+  .SecondNavbar .flex .unvisited {
+    background: #444444;
+  }
+  
+  .SecondNavbar .flex .visited {
+    background: rgb(121, 8, 173);;
+  }
+  
+  .SecondNavbar .flex .shortest-path {
+    background: rgb(212, 68, 16);
+  }
+  
+  .SecondNavbar .flex .wall {
+    background: rgb(0, 0, 0);
+  }
+  
+  .SecondNavbar .flex .speed {
+    background: url('../images/speed.png') center no-repeat;
     background-size: cover;
-    transition: .4s all ease-in-out;
-  }
-
-  .SecondNavbar .wall {
-    cursor: pointer;
-    transition: .4s all ease-in-out;
-  }
-
-  .SecondNavbar .wall:hover {
-    color: #0773e7;
+    width: 25px;
+    height: 25px;
   }

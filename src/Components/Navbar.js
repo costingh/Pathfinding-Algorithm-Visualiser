@@ -4,7 +4,7 @@ import Select from 'react-select';
 import '../styles/Navbar.css';
 
 function Navbar(props) {                
-    const {clearPath, changeSpeed, runAlgorithm, changeAlgorithm } = props
+    const {clearPath, changeSpeed, runAlgorithm, changeAlgorithm, handleChangeHeuristic, handleChangeDiagonal, clearWalls } = props
     const algorithmOptions = [
         { value: 'Dijkstra', label: 'Dijkstra' },
         { value: 'A*', label: 'A*' },
@@ -19,6 +19,17 @@ function Navbar(props) {
         { value: '1', label: 'Very Fast' }
     ]
 
+    const heuristicOptions = [
+        { value: 'euclidean', label: 'Eulcidean' },
+        { value: 'manhattan', label: 'Manhattan' },
+        { value: 'diagonal', label: 'Diagonal' }
+    ]
+
+    const diagonalOptions = [
+        { value: 'true', label: 'true' },
+        { value: 'false', label: 'false' }
+    ]
+
     const handleAlgoChange = selectedOption => {
         changeAlgorithm(selectedOption.value);
     };
@@ -27,16 +38,20 @@ function Navbar(props) {
         changeSpeed(selectedOption.value);
     };
 
+    const heuristicChange = selectedOption => {
+        handleChangeHeuristic(selectedOption.value);
+    };
+
+    const diagonal = (selectedOption) => {
+        handleChangeDiagonal(selectedOption.value)
+    };
+
     return (
         <>
             <nav className="Navbar">
-                <div className="flex button-generate-start">
-                    <div className="start"></div>
-                    <div>Start</div>
-                </div>
-                <div className="flex button-generate-finish">
-                    <div className="target"></div>
-                    <div>Target</div>
+                <div className="flex wall" onClick={clearWalls}>
+                    <div>Clear Walls</div>
+                    <div className="walls"></div>
                 </div>
                 <div className="flex">
                     <div>Algo: </div>
@@ -49,35 +64,37 @@ function Navbar(props) {
                     />
                 </div>
                 <div className="flex">
-                    <div>Speed </div>
+                <div>A* Heuristic: </div>
+                    <Select
+                        onChange={heuristicChange}
+                        options={heuristicOptions}
+                        className="selectTag"
+                        placeholder={heuristicOptions[0].label}
+                        defaultValue={heuristicOptions[0].label}
+                    />
+                </div>
+                <div className="button rounded" onClick={runAlgorithm}>
+                    Visualize
+                </div>
+                <div className="flex">
+                    <div>Speed: </div>
                     <Select
                         onChange={handleSpeedChange}
                         options={speedOptions}
                         className="selectTag"
                         placeholder={speedOptions[2].label}
                         defaultValue={speedOptions[2].label}
+                    /> 
+                </div>
+                <div className="flex">
+                <div>Allow diagonal search: </div>
+                    <Select
+                        onChange={diagonal}
+                        options={diagonalOptions}
+                        className="selectTag"
+                        placeholder={diagonalOptions[0].label}
+                        defaultValue={diagonalOptions[0].label}
                     />
-                </div>
-
-                {/* <div className="flex">
-                    <div className="unvisited"></div>
-                    <div>Unvisited Node</div>
-                </div> */}
-
-                <div className="button rounded" onClick={runAlgorithm}>
-                    Visualize
-                </div>
-                <div className="flex">
-                    <div className="visited"></div>
-                    <div>Visited</div>
-                </div>
-                <div className="flex">
-                    <div className="wall"></div>
-                    <div>Wall</div>
-                </div>
-                <div className="flex">
-                    <div className="shortest-path"></div>
-                    <div>Shortest-Path</div>
                 </div>
                 <div className="flex reset" onClick={clearPath}>
                     <div className="icon"></div>

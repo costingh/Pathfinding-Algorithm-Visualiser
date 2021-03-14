@@ -1,8 +1,7 @@
 .Node {
-    width: 25px;
-    height: 25px;
+    width: 35px;
+    height: 35px;
     outline: 1px solid rgb(37, 37, 37);
-    /* outline: 1px solid rgb(165, 165, 165); */
     display: inline-block;
     position: relative;
   }

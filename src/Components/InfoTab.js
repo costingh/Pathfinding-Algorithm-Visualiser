@@ -22,6 +22,19 @@ const Title = styled.h1`
     letter-spacing: 1px;
 `;
 
+const Close = styled.div`
+    color: #4BB543;
+    font-size: 15px;
+    position: absolute;
+    top: 50px;
+    right: 40px;
+    margin-left: auto;
+    font-size: 15px;
+    text-transform: lowercase;
+    font-weight: 500;
+    letter-spacing: .4px;
+`;
+
 const Description = styled.div`
     letter-spacing: .6px;
     color: rgb(160, 160, 160);
@@ -31,7 +44,7 @@ const Description = styled.div`
 `;
 
 export const InfoTab =
-    () => {
+    ({handleHideInfos}) => {
         let offsetX, offsetY
         const move = e => {
             const el = e.target
@@ -52,10 +65,11 @@ export const InfoTab =
         return (
             <Infos  onMouseDown={add} onMouseUp={remove} >
                 <Title>How to use?</Title>
-                <Description>To visialize the algorithm, you need 2 nodes on the grid: a start and a finish one. You can generate them randomly, just by clicking on the buttons from the navbar above: START and TARGET</Description>
-                <Description>After the nodes have been generated, you can move them around (with drag and drop).</Description>
+                <Close onClick={handleHideInfos}>hide</Close>
+                <Description>On the grid, the start node and the finish node are being displayed. Clicking Visualize button will run the animation of the current selected algorithm.</Description>
+                <Description>These nodes can be moved all around the grid, jus by pressing the mouse on the current node and dragging it to the destination.</Description>
                 <Description>By clicking on a random grid node, and keeping the mouse pressed, you can draw a wall.(an obstacle for the algorithm)</Description>
-                <Description>Then, you can click Visualise, and the algorithm will compute and animate the shortest path from the start node, to the finish one.</Description>
+                <Description>The reset button will reset just the animated nodes, leaving walls and start/finish nodes untouched. For clearing the walls there is a separate button.</Description>
             </Infos>   
         )
     }

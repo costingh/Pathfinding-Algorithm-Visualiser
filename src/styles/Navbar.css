@@ -17,54 +17,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 180px;
     padding: 15px 0px;
   }
-  
-  .Navbar .flex .start,
-  .Navbar .flex .target,
-  .Navbar .flex .unvisited,
-  .Navbar .flex .visited,
-  .Navbar .flex .shortest-path,
-  .Navbar .flex .wall {
-    width: 20px;
-    height: 20px;
+
+  .Navbar .walls {
+    margin-left: 15px;
+    width: 30px;
+    height: 30px;
     margin-right: 10px;
-  }
-  
-  .Navbar .flex .start {
-    background: url('../images/start-flag.png') center no-repeat;
-      background-size: cover;
-  }
-  
-  .Navbar .flex .target {
-    background: url('../images/circle.png') center no-repeat;
-      background-size: cover;
-  }
-  
-  .Navbar .flex .unvisited {
-    outline: 1px solid #000;
-  }
-  
-  .Navbar .flex .visited {
-    background: rgb(121, 8, 173);;
-  }
-  
-  .Navbar .flex .shortest-path {
-    background: rgb(212, 68, 16);
-  }
-  
-  .Navbar .flex .wall {
-    background: rgb(0, 0, 0);
-  }
-  
-  .Navbar .flex .speed {
-    background: url('../images/speed.png') center no-repeat;
+    background: url('../images/bricks.svg') center center no-repeat;
     background-size: cover;
-    width: 25px;
-    height: 25px;
+    transition: .4s all ease-in-out;
   }
 
+  .Navbar .wall {
+    cursor: pointer;
+    transition: .4s all ease-in-out;
+  }
+
+  .Navbar .wall:hover {
+    color: #0773e7;
+  }
+  
   .reset .icon {
     height: 30px;
     width: 30px;
@@ -84,7 +58,7 @@
   }
   
   .Navbar .selectTag {
-    width: 120px;
+    width: 150px;
     margin-left: 10px;
   }
 
@@ -110,3 +84,4 @@
     background: #1888ff;
     border-radius: 15px;
   }
+

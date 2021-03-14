@@ -7,11 +7,12 @@ import { backtrackPath } from '../helpers/helpers.js';
 import React, { Component } from 'react';
 import { InfoTab } from './InfoTab';
 import Navbar from './Navbar';
+import {TimeTakenPanel} from './TimeTakenPanel'
 
 import '../styles/Grid.css';
 import SecondNavbar from "./SecondNavbar";
 
-const nodeDimension = 25;
+const nodeDimension = 35;
 
 export default class Grid extends Component {
 	constructor() {
@@ -31,7 +32,8 @@ export default class Grid extends Component {
 			finishNodeIsBeingDragged: false,
 			heuristicType: 'euclidean',
 			allowDiagonal: true,
-			timeTaken: 0
+			timeTaken: 0,
+			showInfos: true
 		  };
 	}
 	
@@ -375,23 +377,31 @@ export default class Grid extends Component {
 		this.setState({ allowDiagonal: val})
 	}
 
+	handleHideInfos() {
+		this.setState({ showInfos: !this.state.showInfos })
+	}
+
 	render() {
-		const { grid, mouseIsPressed, running } = this.state;
+		const { grid, mouseIsPressed, running, showInfos } = this.state;
 		return (
 			<div className="Wrapper">
-				<InfoTab></InfoTab>
+				{showInfos &&
+					<InfoTab 
+						handleHideInfos={this.handleHideInfos.bind(this)}
+					>
+					</InfoTab>
+				}
 				<Navbar
 					clearPath={this.resetAll.bind(this)}
 					changeSpeed={this.handleChangeSpeed.bind(this)}
 					runAlgorithm={this.visualizeCurrentAlgorithm.bind(this)}
 					changeAlgorithm={this.handleChangeAlgorithm.bind(this)}
-				/>
-				<SecondNavbar 
 					handleChangeHeuristic={this.handleChangeHeuristic.bind(this)}
 					handleChangeDiagonal={this.handleChangeDiagonal.bind(this)}
-					timeTaken={this.state.timeTaken}
 					clearWalls={this.clearWalls.bind(this)}
 				/>
+				<SecondNavbar />
+				<TimeTakenPanel timeTaken={this.state.timeTaken} />
 				<div className="Grid">
 					{grid.map((row, rowIndex) => {
 						return (

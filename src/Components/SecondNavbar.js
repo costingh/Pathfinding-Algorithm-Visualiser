@@ -3,55 +3,33 @@ import Select from 'react-select';
 
 import '../styles/SecondNavbar.css'
 
-function SecondNavbar({handleChangeHeuristic, timeTaken, handleChangeDiagonal, clearWalls}) {
-    const heuristicOptions = [
-        { value: 'euclidean', label: 'Eulcidean' },
-        { value: 'manhattan', label: 'Manhattan' },
-        { value: 'diagonal', label: 'Diagonal' }
-    ]
-
-    const diagonalOptions = [
-        { value: 'true', label: 'true' },
-        { value: 'false', label: 'false' }
-    ]
-
-    const heuristicChange = selectedOption => {
-        handleChangeHeuristic(selectedOption.value);
-    };
-
-    const diagonal = (selectedOption) => {
-        handleChangeDiagonal(selectedOption.value)
-    }
+function SecondNavbar() {
 
     return (
         <div className="SecondNavbar">
-            <div className="flex">
-                <div>A* Heuristic: </div>
-                <Select
-                    onChange={heuristicChange}
-                    options={heuristicOptions}
-                    className="selectTag"
-                    placeholder={heuristicOptions[0].label}
-                    defaultValue={heuristicOptions[0].label}
-                />
+            <div className="flex button-generate-start">
+                <div className="start"></div>
+                <div>Start</div>
+            </div>
+            <div className="flex button-generate-finish">
+                <div className="target"></div>
+                <div>Target</div>
             </div>
             <div className="flex">
-                <div>Time taken:</div>
-                <p className='time'><span>{parseFloat(timeTaken).toFixed(3)} ms</span></p>
-            </div>
-            <div className="flex wall" onClick={clearWalls}>
-                <div>Clear Walls</div>
-                <div className="walls"></div>
+                <div className="unvisited"></div>
+                <div>Unvisited Node</div>
             </div>
             <div className="flex">
-                <div>Allow diagonal search: </div>
-                <Select
-                    onChange={diagonal}
-                    options={diagonalOptions}
-                    className="selectTag"
-                    placeholder={diagonalOptions[0].label}
-                    defaultValue={diagonalOptions[0].label}
-                />
+                <div className="visited"></div>
+                <div>Visited</div>
+            </div>
+            <div className="flex">
+                <div className="wall"></div>
+                <div>Wall</div>
+            </div>
+            <div className="flex">
+                <div className="shortest-path"></div>
+                <div>Shortest-Path</div>
             </div>
         </div>
     )
