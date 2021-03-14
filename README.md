@@ -1,3 +1,59 @@
+# Pathfinding Algorithm Visualiser
+
+## Click [here](https://costingh.github.io/deploy-pathfinding-visualiser/) for a live demo of this app!
+
+### Description
+
+This is a tool built using react, that allows visualising the path between two nodes, found with the help of a choosen algorithm.
+
+### Algorithms implemented
+
+## 1. Dijkstra
+
+Dijkstra’s Algorithm lets us prioritize which paths to explore. Instead of exploring all possible paths equally, it favors lower cost paths.
+We can assign lower cost to encourage moving on roads while assigning high cost on highway to avoid them.
+It is the algorithm of choice for finding the shortest paths with multiple destinations.
+
+## 2. A*
+
+A* is a modification of Dijkstra’s Algorithm that is optimized for a single destination.
+Dijkstra’s Algorithm can find paths to all locations; A* finds paths to one location. It prioritizes paths that seem to be leading closer to a goal.
+In a game, we could set costs to be attracted or discouraged in going near some objects : how useful it is for an AI.
+It is more or less the golden ticket or industry standard algorithm for all applications finding directions between two locations.
+It can be performed using different type of heuristics (only manhattan, euclidian, diagonal are implemented).
+
+## 3. Bredth First Search
+
+Breadth First Search explores equally in all directions.
+This is an incredibly useful algorithm, not only for regular traversal, but also for procedural map generation, flow field pathfinding, distance maps, and other types of map analysis.
+This may be the algorithm of choice to identify nearby places of interest in GPS.
+BFS guarantees the shortest path.
+
+## 4. Depth First Search
+
+Traverses by exploring as far as possible down each path before backtracking.
+As useful as the BFS: DFS can be used to generate a topological ordering, to generate mazes, to traverse trees, to build decision trees, to discover a solution path with hierarchical choices.
+DFS does not guarantee the shortest path.
+
+### Getting Started
+
+#### Installing
+
+* **Run this command** git clone https://github.com/costingh/deploy-pathfinding-visualiser.git
+
+#### Executing program
+
+* Run npm install
+* Run npm start
+
+### Functionality
+At first on the grid there are two nodes drawn (start and finish). You cand draw obstacles, such like walls, and then choose the algorithm that you want to visualise. After clicking visualise, the algorithm will compute the path from start to finish node, and then you will see the animation.
+
+### Tech Stack
+* HTML
+* CSS
+* React
+* Javascript
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -67,4 +123,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 ### `yarn build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This section has moved here: [https://facebook.github.io/create-r
