@@ -2,7 +2,7 @@
 
 ## Click [here](https://costingh.github.io/deploy-pathfinding-visualiser/) for a live demo of this app!
 
-![Demo Image](https://github.com/costingh/Pathfinding-Algorithm-Visualiser/blob/master/demo-img.jpg?raw=true)
+![Demo Image](https://github.com/costingh/Pathfinding-Algorithm-Visualiser/blob/master/demo-img.png?raw=true)
 
 ### Description
 
