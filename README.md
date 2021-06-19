@@ -2,6 +2,8 @@
 
 ## Click [here](https://costingh.github.io/deploy-pathfinding-visualiser/) for a live demo of this app!
 
+![Demo Image](https://github.com/costingh/Pathfinding-Algorithm-Visualiser/blob/master/demo-img.jpg?raw=true)
+
 ### Description
 
 This is a tool built using react, that allows visualising the path between two nodes, found with the help of a choosen algorithm.
